@@ -21,6 +21,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import androidx.annotation.RequiresApi;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
@@ -105,22 +106,42 @@ public class ACTService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED){
-            if(event.getPackageName() != null){
-                if(event.getPackageName().toString().contains("pinduoduo")){
-                    Log.i(_TAG,"拼多多正在运行于前台");
+        switch (event.getEventType()){
+            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                if(event.getPackageName() != null){
+                    if(event.getPackageName().toString().contains("pinduoduo")){
+                        Log.i(_TAG,"拼多多正在运行于前台");
+                        AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
+                        if (nodeInfo != null){
+                            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByText("多多视频");
+                            Log.i(_TAG,"发现"+ list.size()+"个符合条件的节点");
+                            for (AccessibilityNodeInfo info:
+                                 list) {
+                                if(info.isClickable()){
+                                    info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    Log.i(_TAG,"已找到按钮并点击");
+                                }
+                            }
+                        }
+                    }
                 }
-            }
+                break;
+            //TODO
+            case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
+                Log.i(_TAG,"TYPE_WINDOW_CONTENT_CHANGED");
+                break;
+            default:
+                break;
         }
-        if (!isServiceInterrupted) {
-            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_FOCUSED) {
-                Log.i(_TAG,"服务已捕获到弹窗");
-                AccessibilityNodeInfo source = event.getSource();
-                if (source != null) {
-                    traverseNodes(source, 0,"网络");
-                }
-            }
-        }
+//        if (!isServiceInterrupted) {
+//            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_FOCUSED) {
+//                Log.i(_TAG,"服务已捕获到弹窗");
+//                AccessibilityNodeInfo source = event.getSource();
+//                if (source != null) {
+//                    traverseNodes(source, 0,"网络");
+//                }
+//            }
+//        }
     }
 
     @Override

@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity  {
 
         // 创建数据集
         List<ClientViewData> clientViewData = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            clientViewData.add(new ClientViewData(String.valueOf(i), R.drawable.test_image));
+        for (int i = 1; i <= 5; i++) {
+            clientViewData.add(new ClientViewData("192.168.1." + i, R.drawable.connect_lost));
         }
 
         // 创建adapter，准备为视图提供数据

@@ -15,7 +15,7 @@ import github.kutouzi.actassistant.R;
 import github.kutouzi.actassistant.entity.ClientViewData;
 
 public class ClientViewAdapter extends RecyclerView.Adapter<ClientViewAdapter.ViewHolder> {
-    private List<ClientViewData> constraintLayoutList;
+    private List<ClientViewData> constraintLayoutList; //提供视图列表
 
     public ClientViewAdapter(List<ClientViewData> constraintLayoutList) {
         this.constraintLayoutList = constraintLayoutList;

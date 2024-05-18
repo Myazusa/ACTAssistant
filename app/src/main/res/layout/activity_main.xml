@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/clientView"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/OptionLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:background="#408E8E8E"
+        android:orientation="horizontal"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/addClientButton"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="#8090C1E1"
+            android:contentDescription="@string/addConnectButtonDescription"
+            app:srcCompat="@android:drawable/ic_menu_add" />
+
+        <ImageButton
+            android:id="@+id/serviceWindowButton"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="#80D69AB4"
+            android:contentDescription="@string/startACTButtonDescription"
+            android:padding="@dimen/cardview_default_radius"
+            app:srcCompat="@android:drawable/ic_lock_power_off" />
+
+        <ImageButton
+            android:id="@+id/settingButton"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="#8090C1E1"
+            android:contentDescription="@string/settingButtonDescription"
+            android:padding="@dimen/cardview_default_radius"
+            app:srcCompat="@android:drawable/ic_menu_preferences" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

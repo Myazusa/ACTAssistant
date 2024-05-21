@@ -1,6 +1,5 @@
 package github.kutouzi.actassistant.service;
 
-import static github.kutouzi.actassistant.MainActivity.ACCESSIBILITY_CONNECTED_ACTION;
 import static github.kutouzi.actassistant.MainActivity.ACTION_INTERRUPT_ACCESSIBILITY_SERVICE;
 
 import android.accessibilityservice.AccessibilityService;
@@ -19,6 +18,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.DialogFragment;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +36,8 @@ public class ACTService extends AccessibilityService {
     private static final Random _randomValue = new Random();
 
     // 控制每一个上划间隔的参数
-    private static final int _RANDOM_MAX_SWIPEUP_VALUE = 12000;
-    private static final int _RANDOM_MIN_SWIPEUP_VALUE = 6000;
+    private static final int _RANDOM_MAX_SWIPEUP_VALUE = 24000;
+    private static final int _RANDOM_MIN_SWIPEUP_VALUE = 12000;
 
     // 控制上划操作所耗时间的参数
     private static final int _RANDOM_MAX_DELAY_VALUE = 600;
@@ -61,7 +61,6 @@ public class ACTService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        sendBroadcast(new Intent(ACCESSIBILITY_CONNECTED_ACTION));
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -80,68 +79,94 @@ public class ACTService extends AccessibilityService {
         }
     };
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onCreate() {
         super.onCreate();
         IntentFilter filter = new IntentFilter(ACTION_INTERRUPT_ACCESSIBILITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(broadcastReceiver, filter, Context.RECEIVER_EXPORTED);
+        }else {
+            registerReceiver(broadcastReceiver, filter);
         }
     }
 
     @Override
     protected boolean onKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            switch (event.getKeyCode()) {
-                case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    onInterrupt();
-                    return true;
-                default:
-                    return false;
+            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                onInterrupt();
+                return true;
             }
+            return false;
         }
         return super.onKeyEvent(event);
     }
 
+    private void pingduoduoFunction(CharSequence packageName){
+        if(packageName.toString().contains("pinduoduo")){
+            Log.i(_TAG,"拼多多正在运行于前台");
+            AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
+            if (nodeInfo != null){
+                List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByText("多多视频");
+                Log.i(_TAG,"发现"+ list.size()+"个符合条件的节点");
+                for (AccessibilityNodeInfo info:
+                        list) {
+                    if(info.isClickable()){
+                        info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        Log.i(_TAG,"已找到按钮并点击");
+                    }
+                }
+            }
+        }
+    }
+    private void meituanFunction(CharSequence packageName){
+        if(packageName.toString().contains("meituan")){
+            Log.i(_TAG,"美团正在运行于前台");
+            AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
+            if (nodeInfo != null){
+                List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByText("视频");
+                Log.i(_TAG,"发现"+ list.size()+"个符合条件的节点");
+                for (AccessibilityNodeInfo info:
+                        list) {
+                    if(info.isClickable()){
+                        info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        Log.i(_TAG,"已找到按钮并点击");
+                    }
+                }
+            }
+        }
+    }
+
+    private void meituanCancelJinrijiangli(AccessibilityNodeInfo rootInfo){
+        if(rootInfo.findAccessibilityNodeInfosByText("领取今日奖励") != null){
+            List<AccessibilityNodeInfo> jiangliList = rootInfo.findAccessibilityNodeInfosByText("领取今日奖励");
+            for (AccessibilityNodeInfo info:
+                    jiangliList) {
+                traverseParent(info).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+            }
+        }
+    }
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         switch (event.getEventType()){
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 if(event.getPackageName() != null){
-                    if(event.getPackageName().toString().contains("pinduoduo")){
-                        Log.i(_TAG,"拼多多正在运行于前台");
-                        AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
-                        if (nodeInfo != null){
-                            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByText("多多视频");
-                            Log.i(_TAG,"发现"+ list.size()+"个符合条件的节点");
-                            for (AccessibilityNodeInfo info:
-                                 list) {
-                                if(info.isClickable()){
-                                    info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    Log.i(_TAG,"已找到按钮并点击");
-                                }
-                            }
-                        }
-                    }
+                    //执行拼多多逻辑
+                    pingduoduoFunction(event.getPackageName());
+                    //执行美团逻辑
+                    meituanFunction(event.getPackageName());
                 }
                 break;
-            //TODO
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
-                Log.i(_TAG,"TYPE_WINDOW_CONTENT_CHANGED");
+                if(!isServiceInterrupted){
+                    if(event.getSource() != null){
+                        meituanCancelJinrijiangli(event.getSource());
+                    }
+                }
                 break;
             default:
                 break;
         }
-//        if (!isServiceInterrupted) {
-//            if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_FOCUSED) {
-//                Log.i(_TAG,"服务已捕获到弹窗");
-//                AccessibilityNodeInfo source = event.getSource();
-//                if (source != null) {
-//                    traverseNodes(source, 0,"网络");
-//                }
-//            }
-//        }
     }
 
     @Override
@@ -201,7 +226,7 @@ public class ACTService extends AccessibilityService {
         handler.post(pendingAction);
     }
 
-    private void traverseNodes(AccessibilityNodeInfo node, int depth,String searchString) {
+    private void traverseNodes(AccessibilityNodeInfo node, int depth) {
         if (node == null) {
             return;
         }
@@ -220,12 +245,21 @@ public class ACTService extends AccessibilityService {
         // 递归遍历子节点
         for (int i = 0; i < node.getChildCount(); i++) {
             AccessibilityNodeInfo child = node.getChild(i);
-            traverseNodes(child, depth + 1,searchString);
+            traverseNodes(child, depth + 1);
         }
 
         // 回收节点资源，避免内存泄漏
         if (node.isAccessibilityFocused() && !node.isImportantForAccessibility()) {
             node.recycle();
         }
+    }
+    private AccessibilityNodeInfo traverseParent(AccessibilityNodeInfo node){
+        if(node.getParent() != null){
+            if(node.getClassName().toString().contains("ViewGroup") && node.getParent().isClickable()){
+                Log.i(_TAG,"找到符合条件的ViewGroup");
+                return node.getParent();
+            }
+        }
+        return traverseParent(node.getParent());
     }
 }

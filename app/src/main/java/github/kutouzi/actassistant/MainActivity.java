@@ -8,8 +8,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -22,12 +20,9 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageButton;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.gsls.gt.GT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +40,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public static final String ACTION_INTERRUPT_ACCESSIBILITY_SERVICE = "github.kutouzi.actassistant.ACTION_INTERRUPT_ACCESSIBILITY_SERVICE";
 
-    public static final String ACCESSIBILITY_CONNECTED_ACTION = "github.kutouzi.actassistant.ACCESSIBILITY_CONNECTED_ACTION";
+
     private final String _TAG = getClass().getName();
     private ActivityMainBinding _binding;
     private WindowManager windowManager;
@@ -68,41 +63,22 @@ public class MainActivity extends AppCompatActivity  {
 
     private View _actServiceButton;
 
-    private int _recyclerViewSpanCount = 3;
+    private final int _recyclerViewSpanCount = 3;
     private boolean _isStartServiceWindowButtonPressed = false;
 
     private boolean _isACTServiceButtonPressed = false;
 
-    private BroadcastReceiver _broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Objects.equals(intent.getAction(), ACCESSIBILITY_CONNECTED_ACTION)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-                }
-            }
-        }
-    };
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(_broadcastReceiver);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(_binding.getRoot());
 
-        // 注册与无障碍通信的广播
-        IntentFilter filter = new IntentFilter(ACCESSIBILITY_CONNECTED_ACTION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(_broadcastReceiver, filter, Context.RECEIVER_EXPORTED);
-        }
 
         CreateClientView();
         CreateSettingSwitch();
@@ -131,7 +107,6 @@ public class MainActivity extends AppCompatActivity  {
         _clientRecyclerView.setAdapter(adapter);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void CreateServiceWindowSwitch(){
         // 创建悬浮窗开关按钮
         _serviceWindowButton = findViewById(R.id.serviceWindowButton);
@@ -140,13 +115,23 @@ public class MainActivity extends AppCompatActivity  {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         // 设置悬浮窗参数
-        _layoutParams = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT
-        );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            _layoutParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+        }else {
+            _layoutParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+        }
 
         // 根据按钮状态打开或移除悬浮窗
         _serviceWindowButton.setOnClickListener(v -> {

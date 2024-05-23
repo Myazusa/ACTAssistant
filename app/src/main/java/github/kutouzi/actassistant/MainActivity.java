@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import github.kutouzi.actassistant.adapter.ClientViewAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;

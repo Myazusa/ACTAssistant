@@ -1,4 +1,4 @@
-package github.kutouzi.actassistant.entity;
+package github.kutouzi.actassistant.enums;
 
 public class ApplicationDefinition {
     public static final int NULLAPP = 0;

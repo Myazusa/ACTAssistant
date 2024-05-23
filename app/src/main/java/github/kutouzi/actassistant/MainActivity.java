@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public static final String ACTION_INTERRUPT_ACCESSIBILITY_SERVICE = "github.kutouzi.actassistant.ACTION_INTERRUPT_ACCESSIBILITY_SERVICE";
 
+    public static final String ACTION_ACT_SWITCH = "github.kutouzi.actassistant.ACTION_ACT_SWITCH";
 
     private final String _TAG = getClass().getName();
     private ActivityMainBinding _binding;
@@ -68,6 +69,25 @@ public class MainActivity extends AppCompatActivity  {
 
     private boolean _isACTServiceButtonPressed = false;
 
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ACTION_ACT_SWITCH.equals(intent.getAction())) {
+                    if (_isACTServiceButtonPressed){
+                        _isACTServiceButtonPressed = false;
+                        _actServiceButton.setBackgroundColor(Color.parseColor("#FFAAFDF4"));
+                        SwitchAllButtonInServiceStarted();
+                        Log.i(_TAG,"服务开关已被禁用");
+                    }else {
+                        _isACTServiceButtonPressed = true;
+                        _actServiceButton.setBackgroundColor(Color.parseColor("#FFFDAAAA"));
+                        SwitchAllButtonInServiceStarted();
+                        Log.i(_TAG,"服务开关已被启用");
+                    }
+            }
+        }
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -75,15 +95,16 @@ public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         _binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(_binding.getRoot());
-
 
         CreateClientView();
         CreateSettingSwitch();
         CreateAddClientSwitch();
         CreateServiceWindowSwitch();
+
     }
 
     private void CreateClientView(){
@@ -97,7 +118,7 @@ public class MainActivity extends AppCompatActivity  {
         // 创建数据集
         List<ClientViewData> clientViewData = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            clientViewData.add(new ClientViewData("192.168.1." + i, R.drawable.connect_lost));
+            clientViewData.add(new ClientViewData("192.168.1." + i, R.drawable.connection_lost));
         }
 
         // 创建adapter，准备为视图提供数据
@@ -176,6 +197,8 @@ public class MainActivity extends AppCompatActivity  {
                         _isStartServiceWindowButtonPressed = true;
                         SwitchAllButtonInWindowStarted();
 
+
+
                     }
                 }
             }
@@ -192,13 +215,23 @@ public class MainActivity extends AppCompatActivity  {
                 _isACTServiceButtonPressed = false;
                 _actServiceButton.setBackgroundColor(Color.parseColor("#FFAAFDF4"));
                 SwitchAllButtonInServiceStarted();
+                Log.i(_TAG,"服务开关已被禁用");
             }else {
                 StartACTService();
                 _isACTServiceButtonPressed = true;
                 _actServiceButton.setBackgroundColor(Color.parseColor("#FFFDAAAA"));
                 SwitchAllButtonInServiceStarted();
+                Log.i(_TAG,"服务开关已被启用");
             }
         });
+
+        //注册中断开关广播
+        IntentFilter filter = new IntentFilter(ACTION_ACT_SWITCH);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(broadcastReceiver, filter, Context.RECEIVER_EXPORTED);
+        }else {
+            registerReceiver(broadcastReceiver, filter);
+        }
     }
 
     private void CreateReturnMainActivitySwitch(){

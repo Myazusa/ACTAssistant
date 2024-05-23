@@ -1,6 +1,10 @@
 package github.kutouzi.actassistant.service;
 
+import static github.kutouzi.actassistant.MainActivity.ACTION_ACT_SWITCH;
 import static github.kutouzi.actassistant.MainActivity.ACTION_INTERRUPT_ACCESSIBILITY_SERVICE;
+import static github.kutouzi.actassistant.entity.ApplicationDefinition.MEITUAN;
+import static github.kutouzi.actassistant.entity.ApplicationDefinition.PINGDUODUO;
+import static github.kutouzi.actassistant.entity.ApplicationDefinition.PINGDUODUO_PAKAGENAME;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
@@ -11,22 +15,20 @@ import android.content.IntentFilter;
 import android.graphics.Path;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.DialogFragment;
-
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-// 拼多多：com.xunmeng.pinduoduo
+import github.kutouzi.actassistant.exception.PakageNotFoundException;
+
 
 public class ACTService extends AccessibilityService {
 
@@ -36,8 +38,8 @@ public class ACTService extends AccessibilityService {
     private static final Random _randomValue = new Random();
 
     // 控制每一个上划间隔的参数
-    private static final int _RANDOM_MAX_SWIPEUP_VALUE = 24000;
-    private static final int _RANDOM_MIN_SWIPEUP_VALUE = 12000;
+    private static final int _RANDOM_MAX_SWIPEUP_VALUE = 14000;
+    private static final int _RANDOM_MIN_SWIPEUP_VALUE = 10000;
 
     // 控制上划操作所耗时间的参数
     private static final int _RANDOM_MAX_DELAY_VALUE = 600;
@@ -49,6 +51,14 @@ public class ACTService extends AccessibilityService {
     private final Handler handler = new Handler();
 
     private static boolean isServiceInterrupted = true;
+    private static boolean isProcessSwipe = false;
+    private static int scanDialogFlag = 0;
+    //TODO: 待解耦
+    private static final List<String> meituanKeyWordList = (ArrayList<String>) Stream.of("现金秒到账", "開")
+            .collect(Collectors.toList());
+
+    private static final List<String> pingduoduoKeyWordList = (ArrayList<String>) Stream.of("领取今日奖励","专属现金红包","立即提现","领取今日现金","明日继续来领","点击观看下一集","打款金额")
+            .collect(Collectors.toList());
 
     private int getScreenWidth() {
         return getResources().getDisplayMetrics().widthPixels;
@@ -68,8 +78,14 @@ public class ACTService extends AccessibilityService {
         public void onReceive(Context context, Intent intent) {
             if (ACTION_INTERRUPT_ACCESSIBILITY_SERVICE.equals(intent.getAction())) {
                 if(Objects.equals(intent.getStringExtra("key"), "Start")){
-                    processSwipe();
-                    isServiceInterrupted = false;
+                    try {
+                        startActivity(PINGDUODUO_PAKAGENAME);
+                    }catch (PakageNotFoundException e){
+                        Log.e(_TAG,e.getMessage());
+                    }finally {
+                        onInterrupt();
+                        sendBroadcast(new Intent(ACTION_ACT_SWITCH));
+                    }
                     Log.i(_TAG,"服务已被设置为Start");
                 }else if (Objects.equals(intent.getStringExtra("key"), "Interrupt")){
                     onInterrupt();
@@ -79,6 +95,25 @@ public class ACTService extends AccessibilityService {
         }
     };
 
+    private void startActivity(String pakageName) throws PakageNotFoundException {
+        Intent intent = getPackageManager().getLaunchIntentForPackage(pakageName);
+
+        if (intent != null){
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            startActivity(intent);
+        }else {
+            throw new PakageNotFoundException(PINGDUODUO_PAKAGENAME);
+        }
+
+    }
+
+    public void onContinue(){
+        handler.removeCallbacks(pendingAction);
+        processSwipe();
+        isServiceInterrupted = false;
+        isProcessSwipe = true;
+        Log.i(_TAG,"上划继续");
+    }
     @Override
     public void onCreate() {
         super.onCreate();
@@ -95,6 +130,7 @@ public class ACTService extends AccessibilityService {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
                 onInterrupt();
+                sendBroadcast(new Intent(ACTION_ACT_SWITCH));
                 return true;
             }
             return false;
@@ -102,7 +138,7 @@ public class ACTService extends AccessibilityService {
         return super.onKeyEvent(event);
     }
 
-    private void pingduoduoFunction(CharSequence packageName){
+    private int pingduoduoFunction(CharSequence packageName){
         if(packageName.toString().contains("pinduoduo")){
             Log.i(_TAG,"拼多多正在运行于前台");
             AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
@@ -117,9 +153,11 @@ public class ACTService extends AccessibilityService {
                     }
                 }
             }
+            return 1;
         }
+        return 0;
     }
-    private void meituanFunction(CharSequence packageName){
+    private int meituanFunction(CharSequence packageName){
         if(packageName.toString().contains("meituan")){
             Log.i(_TAG,"美团正在运行于前台");
             AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
@@ -134,33 +172,54 @@ public class ACTService extends AccessibilityService {
                     }
                 }
             }
+            return 2;
         }
+        return 0;
     }
 
-    private void meituanCancelJinrijiangli(AccessibilityNodeInfo rootInfo){
-        if(rootInfo.findAccessibilityNodeInfosByText("领取今日奖励") != null){
-            List<AccessibilityNodeInfo> jiangliList = rootInfo.findAccessibilityNodeInfosByText("领取今日奖励");
-            for (AccessibilityNodeInfo info:
-                    jiangliList) {
-                traverseParent(info).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+    private void cancelDialog(List<String> list){
+        for (String s: list) {
+            if(getRootInActiveWindow().findAccessibilityNodeInfosByText(s) != null){
+                List<AccessibilityNodeInfo> jiangliList = getRootInActiveWindow().findAccessibilityNodeInfosByText(s);
+                for (AccessibilityNodeInfo info:
+                        jiangliList) {
+                    Log.i(_TAG,"发现'"+ s + "'节点");
+                    performGlobalAction(GLOBAL_ACTION_BACK);
+                    AccessibilityNodeInfo i = traverseParent(info);
+                    if(i != null){
+                        i.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    }
+                }
             }
         }
+
     }
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         switch (event.getEventType()){
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 if(event.getPackageName() != null){
-                    //执行拼多多逻辑
-                    pingduoduoFunction(event.getPackageName());
-                    //执行美团逻辑
-                    meituanFunction(event.getPackageName());
+                    //执行检查拼多多、美团等软件是否启动的逻辑
+                    scanDialogFlag = pingduoduoFunction(event.getPackageName()) + meituanFunction(event.getPackageName());
+                    if(scanDialogFlag != 0 && isServiceInterrupted){
+                        onContinue();
+                        //它们在前台就自动启动开关
+                        sendBroadcast(new Intent(ACTION_ACT_SWITCH));
+                    }
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
-                if(!isServiceInterrupted){
-                    if(event.getSource() != null){
-                        meituanCancelJinrijiangli(event.getSource());
+                //检查拼多多、美团等软件是否启动后才会进入搜索dialog逻辑
+                if(event.getSource() != null){
+                    switch (scanDialogFlag){
+                        case PINGDUODUO:
+                            cancelDialog(pingduoduoKeyWordList);
+                            break;
+                        case MEITUAN:
+                            cancelDialog(meituanKeyWordList);
+                            break;
+                        default:
+                            break;
                     }
                 }
                 break;
@@ -173,7 +232,8 @@ public class ACTService extends AccessibilityService {
     public void onInterrupt() {
         handler.removeCallbacks(pendingAction);
         isServiceInterrupted = true;
-        Log.i(_TAG,"服务被中断");
+        isProcessSwipe = false;
+        Log.i(_TAG,"上划中断");
     }
 
     @Override
@@ -254,12 +314,20 @@ public class ACTService extends AccessibilityService {
         }
     }
     private AccessibilityNodeInfo traverseParent(AccessibilityNodeInfo node){
-        if(node.getParent() != null){
-            if(node.getClassName().toString().contains("ViewGroup") && node.getParent().isClickable()){
+        AccessibilityNodeInfo parent = node.getParent();
+        if(parent != null){
+            if(parent.getClassName().toString().contains("ViewGroup") && parent.isClickable()){
                 Log.i(_TAG,"找到符合条件的ViewGroup");
-                return node.getParent();
+                return parent;
+            }
+            if(parent.getParent() == null){
+                return null;
+            }else {
+                return traverseParent(parent.getParent());
             }
         }
-        return traverseParent(node.getParent());
+        else {
+            return null;
+        }
     }
 }

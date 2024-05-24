@@ -82,6 +82,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
     public void onCreate() {
         super.onCreate();
         _windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         IntentFilter filter = new IntentFilter(ACTION_INTERRUPT_ACCESSIBILITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(broadcastReceiver, filter, Context.RECEIVER_EXPORTED);

@@ -195,9 +195,6 @@ public class MainActivity extends AppCompatActivity  {
 
                         _isStartServiceWindowButtonPressed = true;
                         SwitchAllButtonInWindowStarted();
-
-
-
                     }
                 }
             }

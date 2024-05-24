@@ -28,7 +28,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private final String _TAG = getClass().getName();
 
     //悬浮窗相关
-    private WindowManager windowManager;
+    private WindowManager _windowManager;
 
     private static boolean isServiceInterrupted = true;
 
@@ -81,6 +81,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
     @Override
     public void onCreate() {
         super.onCreate();
+        _windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         IntentFilter filter = new IntentFilter(ACTION_INTERRUPT_ACCESSIBILITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(broadcastReceiver, filter, Context.RECEIVER_EXPORTED);

@@ -11,8 +11,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -29,6 +31,8 @@ public class ACTFloatingWindowService extends AccessibilityService {
 
     //悬浮窗相关
     private WindowManager _windowManager;
+
+    private WindowManager.LayoutParams _layoutParams;
 
     private static boolean isServiceInterrupted = true;
 
@@ -82,7 +86,28 @@ public class ACTFloatingWindowService extends AccessibilityService {
     public void onCreate() {
         super.onCreate();
         _windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        // 设置悬浮窗参数
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            _layoutParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+        }else {
+            _layoutParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+        }
+
         IntentFilter filter = new IntentFilter(ACTION_INTERRUPT_ACCESSIBILITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(broadcastReceiver, filter, Context.RECEIVER_EXPORTED);

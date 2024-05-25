@@ -23,7 +23,7 @@ public class ActionUtil {
 
     private static final Handler handler = new Handler();
 
-    public static void performSwipeUp(String TAG,Resources resources,ACTFloatingWindowService actFloatingWindowService) {
+    private static void performSwipeUp(String TAG,Resources resources,ACTFloatingWindowService actFloatingWindowService) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             float startX = getScreenWidth(resources) / 2f;
             float startY = getScreenHeight(resources) / 2f;
@@ -53,19 +53,15 @@ public class ActionUtil {
         return resources.getDisplayMetrics().heightPixels;
     }
 
-    public static void processSwipe(String TAG, boolean isServiceInterrupted,Resources resources,ACTFloatingWindowService actFloatingWindowService) {
-        if (!isServiceInterrupted) {
-            return;
-        }
+    public static void processSwipe(String TAG,Resources resources,ACTFloatingWindowService actFloatingWindowService) {
         if (pendingAction != null) {
             handler.removeCallbacks(pendingAction);
         }
         pendingAction = () -> {
 
             ActionUtil.performSwipeUp(TAG,resources,actFloatingWindowService);
-            if (!isServiceInterrupted) {
-                handler.postDelayed(pendingAction, RandomtTimeUtil.getRandomDelayTillis(_RANDOM_MIN_SWIPEUP_VALUE,_RANDOM_MAX_SWIPEUP_VALUE));
-            }
+            handler.postDelayed(pendingAction, RandomtTimeUtil.getRandomDelayTillis(_RANDOM_MIN_SWIPEUP_VALUE,_RANDOM_MAX_SWIPEUP_VALUE));
+
         };
         handler.post(pendingAction);
     }

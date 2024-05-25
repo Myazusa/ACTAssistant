@@ -9,31 +9,108 @@
     <LinearLayout
         android:id="@+id/functionButtonLayout"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
+        android:layout_height="220dp"
+        android:background="@drawable/backgroudlayout_rounded_border"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/actServiceButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <github.kutouzi.actassistant.view.ToggleButtonLayout
+            android:id="@+id/startApplicationButton"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="#AAFDF4"
-            android:contentDescription="@string/actServiceButtonDescription"
-            android:padding="5dp"
-            app:srcCompat="@android:drawable/ic_lock_power_off" />
+            android:background="@drawable/button_rounded_border"
+            android:orientation="horizontal"
+            android:padding="2dp">
 
-        <ImageButton
+            <ImageView
+                android:id="@+id/startApplicationImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="开启应用"
+                android:src="@android:drawable/ic_menu_send" />
+
+        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+
+        <github.kutouzi.actassistant.view.ToggleButtonLayout
+            android:id="@+id/scanApplicationButton"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_rounded_border"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/scanApplicationImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="扫描应用"
+                android:src="@android:drawable/ic_menu_search" />
+
+        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+
+        <github.kutouzi.actassistant.view.ToggleButtonLayout
+            android:id="@+id/listeningDialogButton"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_rounded_border"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/listeningDialogImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="监听弹窗"
+                android:src="@android:drawable/ic_menu_mylocation" />
+
+        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+
+
+        <github.kutouzi.actassistant.view.ToggleButtonLayout
+            android:id="@+id/swipeUpButton"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_rounded_border"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/swipeUpImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="上划"
+                android:src="@android:drawable/ic_media_play" />
+
+        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+
+        <github.kutouzi.actassistant.view.ToggleButtonLayout
             android:id="@+id/returnMainActivityButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="#AAFDF4"
-            android:contentDescription="@string/returnMainActivityButtonDescription"
-            android:padding="5dp"
-            app:srcCompat="@android:drawable/ic_menu_revert" />
+            android:background="@drawable/button_rounded_border"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/returnMainActivityImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="返回"
+                android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+        </github.kutouzi.actassistant.view.ToggleButtonLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

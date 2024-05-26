@@ -20,6 +20,7 @@ import github.kutouzi.actassistant.adapter.ClientViewAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
 import github.kutouzi.actassistant.entity.ClientViewData;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
+import github.kutouzi.actassistant.util.ActionUtil;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public static final String CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE = "github.kutouzi.actassistant.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE";
 
-    private final String _TAG = getClass().getName();
+    private static final String _TAG = MainActivity.class.getName();
     private ActivityMainBinding _binding;
 
     // 除服务开关外，其他所有按钮的状态，false表示全部禁用
@@ -140,6 +141,9 @@ public class MainActivity extends AppCompatActivity  {
     }
     private void createSettingSwitch(){
         _settingButton = findViewById(R.id.settingButton);
+        _settingButton.setOnClickListener(v->{
+
+        });
     }
 
     private void createAddClientSwitch(){

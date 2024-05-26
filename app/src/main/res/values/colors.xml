@@ -17,4 +17,7 @@
 
     <color name="button_background_color">#C99AFFE2</color>
     <color name="button_background_rounded_color">#C99AFF55</color>
+
+    <color name="option_background_color">#597AC5F8</color>
+    <color name="option_background_rounded_color">#812575FF</color>
 </resources>

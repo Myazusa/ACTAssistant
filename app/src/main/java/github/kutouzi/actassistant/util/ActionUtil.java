@@ -1,27 +1,42 @@
 package github.kutouzi.actassistant.util;
 
 import android.accessibilityservice.GestureDescription;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Path;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import github.kutouzi.actassistant.entity.SwipeUpData;
+import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
 
 public class ActionUtil {
+    private static final String _TAG = ActionUtil.class.getName();
     // 控制每一个上划间隔的参数
-    private static final int _RANDOM_MAX_SWIPEUP_VALUE = 14000;
-    private static final int _RANDOM_MIN_SWIPEUP_VALUE = 10000;
+    private static int _RANDOM_MAX_SWIPEUP_VALUE = 14000;
+    private static int _RANDOM_MIN_SWIPEUP_VALUE = 10000;
 
     // 控制上划操作所耗时间的参数
-    private static final int _RANDOM_MAX_DELAY_VALUE = 400;
-    private static final int _RANDOM_MIN_DELAY_VALUE = 200;
+    private static int _RANDOM_MAX_DELAY_VALUE = 400;
+    private static int _RANDOM_MIN_DELAY_VALUE = 200;
 
     // 可执行动作
     private static Runnable pendingAction = null;
 
     private static final Handler handler = new Handler();
+    public static void updateRandomTimeValue(Context context){
+        SwipeUpData swipeUpData = JsonFileIO.readJson(context,"swipeUpData.json");
+        if(swipeUpData != null){
+            _RANDOM_MAX_SWIPEUP_VALUE = swipeUpData.getRandomMaxSwipeupValue();
+            _RANDOM_MIN_SWIPEUP_VALUE = swipeUpData.getRandomMinSwipeupValue();
+            _RANDOM_MAX_DELAY_VALUE = swipeUpData.getRandomMaxDelayValue();
+            _RANDOM_MIN_DELAY_VALUE = swipeUpData.getRandomMinDelayValue();
+        }else {
+            Log.i(_TAG,"更新错误，swipeUpData对象为空");
+        }
+    }
 
     private static void performSwipeUp(String TAG,Resources resources,ACTFloatingWindowService actFloatingWindowService) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

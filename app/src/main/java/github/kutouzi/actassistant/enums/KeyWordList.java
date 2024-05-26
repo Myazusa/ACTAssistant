@@ -10,7 +10,7 @@ public class KeyWordList {
             .collect(Collectors.toList());
     public static final List<String> meituanClickableKeyWordList = null;
 
-    public static final List<String> pingduoduoCancelableKeyWordList = Stream.of("领取今日奖励","立即提现","领取今日现金","明日继续来领","打款金额")
+    public static final List<String> pingduoduoCancelableKeyWordList = Stream.of("领取今日奖励","立即提现","领取今日现金","明日继续来领","打款金额","立即收下，去拼单")
             .collect(Collectors.toList());
     public static final List<String> meituanCancelableKeyWordList = Stream.of("现金秒到账","领取今日奖励")
             .collect(Collectors.toList());

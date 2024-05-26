@@ -4,17 +4,18 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 public class TraverseNodeUtil {
-    public static AccessibilityNodeInfo traverseParent(String TAG,AccessibilityNodeInfo node){
+    private static final String _TAG = TraverseNodeUtil.class.getName();
+    public static AccessibilityNodeInfo traverseParent(AccessibilityNodeInfo node){
         AccessibilityNodeInfo parent = node.getParent();
         if(parent != null){
             if(parent.getClassName().toString().contains("ViewGroup") && parent.isClickable()){
-                Log.i(TAG,"找到符合条件的ViewGroup");
+                Log.i(_TAG,"找到符合条件的ViewGroup");
                 return parent;
             }
             if(parent.getParent() == null){
                 return null;
             }else {
-                return traverseParent(TAG,parent.getParent());
+                return traverseParent(parent.getParent());
             }
         }
         else {
@@ -22,7 +23,7 @@ public class TraverseNodeUtil {
         }
     }
 
-    public void traverseNodes(String TAG,AccessibilityNodeInfo node, int depth) {
+    public void traverseNodes(AccessibilityNodeInfo node, int depth) {
         if (node == null) {
             return;
         }
@@ -32,16 +33,16 @@ public class TraverseNodeUtil {
             prefix.append("--");
         }
 
-        Log.i(TAG, prefix + "Class: " + node.getClassName());
-        Log.i(TAG, prefix + "PackageName: " + node.getPackageName());
-        Log.i(TAG, prefix + "Text: " + node.getText());
-        Log.i(TAG, prefix + "ContentDescription: " + node.getContentDescription());
-        Log.i(TAG, prefix + "IsClickable: " + node.isClickable());
+        Log.i(_TAG, prefix + "Class: " + node.getClassName());
+        Log.i(_TAG, prefix + "PackageName: " + node.getPackageName());
+        Log.i(_TAG, prefix + "Text: " + node.getText());
+        Log.i(_TAG, prefix + "ContentDescription: " + node.getContentDescription());
+        Log.i(_TAG, prefix + "IsClickable: " + node.isClickable());
 
         // 递归遍历子节点
         for (int i = 0; i < node.getChildCount(); i++) {
             AccessibilityNodeInfo child = node.getChild(i);
-            traverseNodes(TAG,child, depth + 1);
+            traverseNodes(child, depth + 1);
         }
 
         // 回收节点资源，避免内存泄漏

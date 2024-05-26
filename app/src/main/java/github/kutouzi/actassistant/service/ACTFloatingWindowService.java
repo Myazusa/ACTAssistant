@@ -41,7 +41,7 @@ import github.kutouzi.actassistant.view.ToggleButtonLayout;
 
 
 public class ACTFloatingWindowService extends AccessibilityService {
-    private final String _TAG = getClass().getName();
+    private static final String _TAG = ACTFloatingWindowService.class.getName();
 
     //////////////////////
     //悬浮窗窗体相关
@@ -216,8 +216,8 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void createScanApplicationSwitch(){
         _scanApplicationButton = _windowView.findViewById(R.id.scanApplicationButton);
         _scanApplicationButton.setOnClickListener(v -> {
-            _scanApplicationFlag = PingduoduoUtil.scanPingduoduoApplication(_TAG,getRootInActiveWindow().getPackageName())
-                    + MeituanUtil.scanMeituanApplication(_TAG,getRootInActiveWindow().getPackageName());
+            _scanApplicationFlag = PingduoduoUtil.scanPingduoduoApplication(getRootInActiveWindow().getPackageName())
+                    + MeituanUtil.scanMeituanApplication(getRootInActiveWindow().getPackageName());
             applicationAnnounce();
             findApplicationAction();
         });
@@ -226,9 +226,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
         if(_scanApplicationFlag != 0){
             switch (_scanApplicationFlag){
                 case PINGDUODUO:
-                    PingduoduoUtil.switchToVideo(_TAG,getRootInActiveWindow());
+                    PingduoduoUtil.switchToVideo(getRootInActiveWindow());
                 case MEITUAN:
-                    MeituanUtil.switchToVideo(_TAG,getRootInActiveWindow());
+                    MeituanUtil.switchToVideo(getRootInActiveWindow());
             }
             if(!_swipeUpButton._isToggle){
                 // 如果没有被按下过
@@ -330,10 +330,10 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void switchFunctionToDialog(AccessibilityNodeInfo info){
         switch (_scanApplicationFlag) {
             case PINGDUODUO:
-                DialogUtil.cancelDialog(_TAG, info, this, KeyWordList.pingduoduoCancelableKeyWordList);
+                DialogUtil.cancelDialog(info, this, KeyWordList.pingduoduoCancelableKeyWordList);
                 break;
             case MEITUAN:
-                DialogUtil.cancelDialog(_TAG, info, this, KeyWordList.meituanCancelableKeyWordList);
+                DialogUtil.cancelDialog(info, this, KeyWordList.meituanCancelableKeyWordList);
                 break;
             default:
                 break;

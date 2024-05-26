@@ -18,7 +18,6 @@
     <color name="button_background_color">#C99AFFE2</color>
     <color name="button_background_rounded_color">#C99AFF55</color>
 
-    <color name="option_background_color">#7AC5F8</color>
-    <color name="option_background_rounded_color">#2575FF</color>
-    <color name="option_keywordlist_background_color">#A37AC5F8</color>
+    <color name="option_background_color">#597AC5F8</color>
+    <color name="option_background_rounded_color">#812575FF</color>
 </resources>

@@ -1,6 +1,9 @@
 package github.kutouzi.actassistant.service;
 
 import static github.kutouzi.actassistant.MainActivity.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE;
+import static github.kutouzi.actassistant.enums.ApplicationDefinition.MEITUAN;
+import static github.kutouzi.actassistant.enums.ApplicationDefinition.PINGDUODUO;
+import static github.kutouzi.actassistant.enums.ApplicationDefinition.PINGDUODUO_PAKAGENAME;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.BroadcastReceiver;
@@ -27,12 +30,8 @@ import java.util.Objects;
 
 import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
-import github.kutouzi.actassistant.entity.SwipeUpData;
-import github.kutouzi.actassistant.enums.ApplicationIndexDefinition;
-import github.kutouzi.actassistant.enums.ApplicationPakageNameDefinition;
-import github.kutouzi.actassistant.enums.JsonFileDefinition;
+import github.kutouzi.actassistant.enums.KeyWordList;
 import github.kutouzi.actassistant.exception.PakageNotFoundException;
-import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.util.ActionUtil;
 import github.kutouzi.actassistant.util.DialogUtil;
 import github.kutouzi.actassistant.util.DrawableUtil;
@@ -93,6 +92,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
                         createSwipeUpSwitch();
 
                         createScanApplicationSwitch();
+
 
                         Log.i(_TAG,"悬浮窗已创建");
                     }
@@ -191,7 +191,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
         _startApplicationButton = _windowView.findViewById(R.id.startApplicationButton);
         _startApplicationButton.setOnClickListener(v->{
             try{
-                requestStartApplication(ApplicationPakageNameDefinition.PINGDUODUO_PAKAGENAME);
+                requestStartApplication(PINGDUODUO_PAKAGENAME);
                 _startApplicationButton._isToggle = true;
                 _startApplicationButton.setEnabled(false);
             }catch (PakageNotFoundException e){
@@ -207,7 +207,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             startActivity(intent);
         }else {
-            throw new PakageNotFoundException(ApplicationPakageNameDefinition.PINGDUODUO_PAKAGENAME);
+            throw new PakageNotFoundException(PINGDUODUO_PAKAGENAME);
         }
 
     }
@@ -225,9 +225,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void findApplicationAction(){
         if(_scanApplicationFlag != 0){
             switch (_scanApplicationFlag){
-                case ApplicationIndexDefinition.PINGDUODUO:
+                case PINGDUODUO:
                     PingduoduoUtil.switchToVideo(getRootInActiveWindow());
-                case ApplicationIndexDefinition.MEITUAN:
+                case MEITUAN:
                     MeituanUtil.switchToVideo(getRootInActiveWindow());
             }
             if(!_swipeUpButton._isToggle){
@@ -244,11 +244,11 @@ public class ACTFloatingWindowService extends AccessibilityService {
         if(_scanApplicationFlag != 0) {
             String s;
             switch (_scanApplicationFlag) {
-                case ApplicationIndexDefinition.PINGDUODUO:
+                case PINGDUODUO:
                     s = "拼多多";
                     GT.toast_time("找到" + s + "应用", 1000);
                     break;
-                case ApplicationIndexDefinition.MEITUAN:
+                case MEITUAN:
                     s = "美团";
                     GT.toast_time("找到" + s + "应用", 1000);
                     break;
@@ -263,9 +263,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
         //创建返回开关
         _returnMainActivityButton = _windowView.findViewById(R.id.returnMainActivityButton);
         _returnMainActivityButton.setOnClickListener(v->{
-//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(intent);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             onInterrupt();
         });
     }
@@ -283,10 +283,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
                 switchOtherButtonStates();
                 GT.toast_time("上划结束",1000);
             }else {
-                SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this, JsonFileDefinition.SWIPEUP_JSON_NAME);
                 // 如果上划按钮没被按过
                 // 直接开始上划
-                ActionUtil.processSwipe(getResources(),swipeUpData,this);
+                ActionUtil.processSwipe(_TAG,getResources(),this);
                 switchButtonColor(_swipeUpButton);
                 _swipeUpButton._isToggle = true;
                 switchOtherButtonStates();
@@ -330,13 +329,11 @@ public class ACTFloatingWindowService extends AccessibilityService {
     }
     private void switchFunctionToDialog(AccessibilityNodeInfo info){
         switch (_scanApplicationFlag) {
-            case ApplicationIndexDefinition.PINGDUODUO:
-                DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME)).getPingduoduoCancelableKeyWordList());
+            case PINGDUODUO:
+                DialogUtil.cancelDialog(info, this, KeyWordList.pingduoduoCancelableKeyWordList);
                 break;
-            case ApplicationIndexDefinition.MEITUAN:
-                DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME)).getMeituanCancelableKeyWordList());
+            case MEITUAN:
+                DialogUtil.cancelDialog(info, this, KeyWordList.meituanCancelableKeyWordList);
                 break;
             default:
                 break;

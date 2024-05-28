@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -15,12 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import github.kutouzi.actassistant.adapter.ClientViewAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
 import github.kutouzi.actassistant.entity.ClientViewData;
+import github.kutouzi.actassistant.entity.SwipeUpData;
+import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
-import github.kutouzi.actassistant.util.ActionUtil;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -36,11 +41,11 @@ public class MainActivity extends AppCompatActivity  {
     // 除服务开关外，其他所有按钮的状态，false表示全部禁用
     private boolean _allButtonInWindowStartedState = true;
 
-
     private ImageButton _settingButton;
     private ImageButton _addClientButton;
     private ImageButton _startACTFloatingWindowServiceButton;
     private RecyclerView _clientRecyclerView;
+    private ScrollView _optionView;
 
     private final int _recyclerViewSpanCount = 3;
     private boolean _isStartACTFloatingWindowServiceButtonPressed = false;
@@ -62,6 +67,7 @@ public class MainActivity extends AppCompatActivity  {
         createSettingSwitch();
         createAddClientSwitch();
         createStartFloatingServiceWindowSwitch();
+        createOptionView();
 
     }
 
@@ -142,8 +148,58 @@ public class MainActivity extends AppCompatActivity  {
     private void createSettingSwitch(){
         _settingButton = findViewById(R.id.settingButton);
         _settingButton.setOnClickListener(v->{
-
+            if(_optionView.getVisibility() == View.GONE){
+                _optionView.setVisibility(View.VISIBLE);
+            }
+            else {
+                _optionView.setVisibility(View.GONE);
+            }
         });
+    }
+
+    private void createOptionView(){
+        _optionView = findViewById(R.id.optionLayout);
+        EditText maxSwipeupTimeEditText = findViewById(R.id.maxSwipeupTimeEditText);
+        EditText minSwipeupTimeEditText = findViewById(R.id.minSwipeupTimeEditText);
+        EditText maxDelayTimeEditText = findViewById(R.id.maxDelayTimeEditText);
+        EditText minDelayTimeEditText = findViewById(R.id.minDelayTimeEditText);
+        SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this,"SwipeUpData.json");
+        Optional.ofNullable(swipeUpData).ifPresent(s -> {
+            maxSwipeupTimeEditText.setText(s.getRandomMaxSwipeupValue());
+            minSwipeupTimeEditText.setText(s.getRandomMinSwipeupValue());
+            maxDelayTimeEditText.setText(s.getRandomMaxSwipeupValue());
+            minDelayTimeEditText.setText(s.getRandomMinDelayValue());
+        });
+        maxSwipeupTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
+            if(!hasFocus){
+                Optional.ofNullable(swipeUpData).ifPresent(s->{
+                    s.setRandomMaxSwipeupValue(Integer.parseInt(maxSwipeupTimeEditText.getText().toString()));
+                });
+            }
+        });
+        minSwipeupTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
+            if(!hasFocus){
+                Optional.ofNullable(swipeUpData).ifPresent(s->{
+                    s.setRandomMinSwipeupValue(Integer.parseInt(minSwipeupTimeEditText.getText().toString()));
+                });
+            }
+        });
+        maxDelayTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
+            if(!hasFocus){
+                Optional.ofNullable(swipeUpData).ifPresent(s->{
+                    s.setRandomMaxDelayValue(Integer.parseInt(maxDelayTimeEditText.getText().toString()));
+                });
+            }
+        });
+        minDelayTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
+            if(!hasFocus){
+                Optional.ofNullable(swipeUpData).ifPresent(s->{
+                    s.setRandomMinDelayValue(Integer.parseInt(minDelayTimeEditText.getText().toString()));
+                });
+            }
+        });
+        _optionView.setVisibility(View.GONE);
+
     }
 
     private void createAddClientSwitch(){

@@ -1,12 +1,10 @@
 package github.kutouzi.actassistant.entity;
 
 public class SwipeUpData {
-    private int randomMaxSwipeupValue = 14000;
-    private int randomMinSwipeupValue = 10000;
-
-    // 控制上划操作所耗时间的参数
-    private int randomMaxDelayValue = 400;
-    private int randomMinDelayValue = 200;
+    private int randomMaxSwipeupValue;
+    private int randomMinSwipeupValue;
+    private int randomMaxDelayValue;
+    private int randomMinDelayValue;
 
     public SwipeUpData(int randomMaxSwipeupValue, int randomMinSwipeupValue, int randomMaxDelayValue, int randomMinDelayValue) {
         this.randomMaxSwipeupValue = randomMaxSwipeupValue;

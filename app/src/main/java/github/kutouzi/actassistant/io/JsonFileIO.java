@@ -30,7 +30,7 @@ public class JsonFileIO extends FileIO {
         }
         return true;
     }
-    public static boolean writeDefaultSwipeUpDataJson(Context context, String jsonFileName){
+    private static boolean writeDefaultSwipeUpDataJson(Context context, String jsonFileName){
         SwipeUpData swipeUpData = new SwipeUpData(ConfigDefaultData.defaultRandomMaxSwipeupValue, ConfigDefaultData.defaultRandomMinSwipeupValue,
                 ConfigDefaultData.defaultRandomMaxDelayValue, ConfigDefaultData.defaultRandomMinDelayValue);
         String jsonString = _gson.toJson(swipeUpData);
@@ -55,6 +55,10 @@ public class JsonFileIO extends FileIO {
         }
     }
     public static KeyWordData readKeyWordDataJson(Context context,String jsonFileName){
+        if (!isFileExists(context,jsonFileName)){
+            // 如果文件不存在就先写入默认值
+            writeDefaultKeyWordDataJson(context,jsonFileName);
+        }
         try (InputStreamReader inputStreamReader = new InputStreamReader(context.openFileInput(jsonFileName))){
             return _gson.fromJson(inputStreamReader, KeyWordData.class);
         } catch (IOException e) {
@@ -64,6 +68,23 @@ public class JsonFileIO extends FileIO {
     }
 
     public static boolean writeKeyWordDataJson(Context context, String jsonFileName, KeyWordData keyWordData) {
+        if (!isFileExists(context,jsonFileName)){
+            // 如果文件不存在就先写入默认值
+            writeDefaultKeyWordDataJson(context,jsonFileName);
+        }
+        String jsonString = _gson.toJson(keyWordData);
+        try (FileOutputStream fileOutputStream = context.openFileOutput(jsonFileName, Context.MODE_PRIVATE)) {
+            fileOutputStream.write(jsonString.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean writeDefaultKeyWordDataJson(Context context, String jsonFileName){
+        KeyWordData keyWordData = new KeyWordData(ConfigDefaultData.defaultPingduoduoClickableKeyWordList, ConfigDefaultData.defaultMeituanClickableKeyWordList,
+                ConfigDefaultData.defaultPingduoduoCancelableKeyWordList, ConfigDefaultData.defaultMeituanCancelableKeyWordList);
         String jsonString = _gson.toJson(keyWordData);
         try (FileOutputStream fileOutputStream = context.openFileOutput(jsonFileName, Context.MODE_PRIVATE)) {
             fileOutputStream.write(jsonString.getBytes());

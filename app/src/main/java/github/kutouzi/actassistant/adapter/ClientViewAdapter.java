@@ -19,7 +19,6 @@ public class ClientViewAdapter extends RecyclerView.Adapter<ClientViewAdapter.Vi
 
     public ClientViewAdapter(List<ClientViewData> constraintLayoutList) {
         this.constraintLayoutList = constraintLayoutList;
-
     }
 
     @NonNull

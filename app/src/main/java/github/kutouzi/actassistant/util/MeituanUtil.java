@@ -5,16 +5,16 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.List;
 
-import github.kutouzi.actassistant.enums.ApplicationDefinition;
+import github.kutouzi.actassistant.enums.ApplicationIndexDefinition;
 
 public class MeituanUtil {
     private static final String _TAG = MeituanUtil.class.getName();
     public static int scanMeituanApplication(CharSequence packageName){
         if(packageName.toString().contains("meituan")){
             Log.i(_TAG,"美团正在运行于前台");
-            return ApplicationDefinition.MEITUAN;
+            return ApplicationIndexDefinition.MEITUAN;
         }
-        return ApplicationDefinition.NULLAPP;
+        return ApplicationIndexDefinition.NULLAPP;
     }
 
     public static void switchToVideo(AccessibilityNodeInfo nodeInfo){

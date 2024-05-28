@@ -1,9 +1,6 @@
 package github.kutouzi.actassistant.service;
 
 import static github.kutouzi.actassistant.MainActivity.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE;
-import static github.kutouzi.actassistant.enums.ApplicationDefinition.MEITUAN;
-import static github.kutouzi.actassistant.enums.ApplicationDefinition.PINGDUODUO;
-import static github.kutouzi.actassistant.enums.ApplicationDefinition.PINGDUODUO_PAKAGENAME;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.BroadcastReceiver;
@@ -30,8 +27,10 @@ import java.util.Objects;
 
 import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
-import github.kutouzi.actassistant.enums.KeyWordList;
+import github.kutouzi.actassistant.enums.ApplicationIndexDefinition;
+import github.kutouzi.actassistant.enums.ApplicationPakageNameDefinition;
 import github.kutouzi.actassistant.exception.PakageNotFoundException;
+import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.util.ActionUtil;
 import github.kutouzi.actassistant.util.DialogUtil;
 import github.kutouzi.actassistant.util.DrawableUtil;
@@ -92,7 +91,6 @@ public class ACTFloatingWindowService extends AccessibilityService {
                         createSwipeUpSwitch();
 
                         createScanApplicationSwitch();
-
 
                         Log.i(_TAG,"悬浮窗已创建");
                     }
@@ -191,7 +189,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
         _startApplicationButton = _windowView.findViewById(R.id.startApplicationButton);
         _startApplicationButton.setOnClickListener(v->{
             try{
-                requestStartApplication(PINGDUODUO_PAKAGENAME);
+                requestStartApplication(ApplicationPakageNameDefinition.PINGDUODUO_PAKAGENAME);
                 _startApplicationButton._isToggle = true;
                 _startApplicationButton.setEnabled(false);
             }catch (PakageNotFoundException e){
@@ -207,7 +205,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             startActivity(intent);
         }else {
-            throw new PakageNotFoundException(PINGDUODUO_PAKAGENAME);
+            throw new PakageNotFoundException(ApplicationPakageNameDefinition.PINGDUODUO_PAKAGENAME);
         }
 
     }
@@ -225,9 +223,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void findApplicationAction(){
         if(_scanApplicationFlag != 0){
             switch (_scanApplicationFlag){
-                case PINGDUODUO:
+                case ApplicationIndexDefinition.PINGDUODUO:
                     PingduoduoUtil.switchToVideo(getRootInActiveWindow());
-                case MEITUAN:
+                case ApplicationIndexDefinition.MEITUAN:
                     MeituanUtil.switchToVideo(getRootInActiveWindow());
             }
             if(!_swipeUpButton._isToggle){
@@ -244,11 +242,11 @@ public class ACTFloatingWindowService extends AccessibilityService {
         if(_scanApplicationFlag != 0) {
             String s;
             switch (_scanApplicationFlag) {
-                case PINGDUODUO:
+                case ApplicationIndexDefinition.PINGDUODUO:
                     s = "拼多多";
                     GT.toast_time("找到" + s + "应用", 1000);
                     break;
-                case MEITUAN:
+                case ApplicationIndexDefinition.MEITUAN:
                     s = "美团";
                     GT.toast_time("找到" + s + "应用", 1000);
                     break;
@@ -329,11 +327,13 @@ public class ACTFloatingWindowService extends AccessibilityService {
     }
     private void switchFunctionToDialog(AccessibilityNodeInfo info){
         switch (_scanApplicationFlag) {
-            case PINGDUODUO:
-                DialogUtil.cancelDialog(info, this, KeyWordList.pingduoduoCancelableKeyWordList);
+            case ApplicationIndexDefinition.PINGDUODUO:
+                DialogUtil.cancelDialog(info, this,
+                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,"KeyWordData.json")).getPingduoduoCancelableKeyWordList());
                 break;
-            case MEITUAN:
-                DialogUtil.cancelDialog(info, this, KeyWordList.meituanCancelableKeyWordList);
+            case ApplicationIndexDefinition.MEITUAN:
+                DialogUtil.cancelDialog(info, this,
+                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,"KeyWordData.json")).getMeituanCancelableKeyWordList());
                 break;
             default:
                 break;

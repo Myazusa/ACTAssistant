@@ -27,7 +27,7 @@ public class ActionUtil {
 
     private static final Handler handler = new Handler();
     public static void updateRandomTimeValue(Context context){
-        SwipeUpData swipeUpData = JsonFileIO.readJson(context,"swipeUpData.json");
+        SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(context,"swipeUpData.json");
         if(swipeUpData != null){
             _RANDOM_MAX_SWIPEUP_VALUE = swipeUpData.getRandomMaxSwipeupValue();
             _RANDOM_MIN_SWIPEUP_VALUE = swipeUpData.getRandomMinSwipeupValue();

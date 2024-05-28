@@ -5,7 +5,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.List;
 
-import github.kutouzi.actassistant.enums.ApplicationDefinition;
+import github.kutouzi.actassistant.enums.ApplicationIndexDefinition;
 
 public class PingduoduoUtil {
     private static final String _TAG = PingduoduoUtil.class.getName();
@@ -13,9 +13,9 @@ public class PingduoduoUtil {
         if(packageName.toString().contains("pinduoduo")){
             Log.i(_TAG,"拼多多正在运行于前台");
 
-            return ApplicationDefinition.PINGDUODUO;
+            return ApplicationIndexDefinition.PINGDUODUO;
         }
-        return ApplicationDefinition.NULLAPP;
+        return ApplicationIndexDefinition.NULLAPP;
     }
 
     public static void switchToVideo(AccessibilityNodeInfo nodeInfo){

@@ -12,6 +12,8 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -24,10 +26,13 @@ import java.util.List;
 import java.util.Optional;
 
 import github.kutouzi.actassistant.adapter.ClientViewAdapter;
+import github.kutouzi.actassistant.adapter.KeyWordJsonSpinnerAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
 import github.kutouzi.actassistant.entity.ClientViewData;
+import github.kutouzi.actassistant.entity.KeyWordData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
+import github.kutouzi.actassistant.enums.KeyWordListDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
 
@@ -228,6 +233,10 @@ public class MainActivity extends AppCompatActivity  {
                 });
             }
         });
+        //KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME);
+        Spinner keyWordJsonSpinner = findViewById(R.id.keyWordJsonSpinner);
+        SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this,R.layout.key_word_list_view);
+        keyWordJsonSpinner.setAdapter(spinnerAdapter);
         _optionView.setVisibility(View.GONE);
 
     }

@@ -27,8 +27,10 @@ import java.util.Objects;
 
 import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
+import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.ApplicationIndexDefinition;
 import github.kutouzi.actassistant.enums.ApplicationPakageNameDefinition;
+import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.exception.PakageNotFoundException;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.util.ActionUtil;
@@ -281,9 +283,10 @@ public class ACTFloatingWindowService extends AccessibilityService {
                 switchOtherButtonStates();
                 GT.toast_time("上划结束",1000);
             }else {
+                SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this, JsonFileDefinition.SWIPEUP_JSON_NAME);
                 // 如果上划按钮没被按过
                 // 直接开始上划
-                ActionUtil.processSwipe(_TAG,getResources(),this);
+                ActionUtil.processSwipe(getResources(),swipeUpData,this);
                 switchButtonColor(_swipeUpButton);
                 _swipeUpButton._isToggle = true;
                 switchOtherButtonStates();
@@ -329,11 +332,11 @@ public class ACTFloatingWindowService extends AccessibilityService {
         switch (_scanApplicationFlag) {
             case ApplicationIndexDefinition.PINGDUODUO:
                 DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,"KeyWordData.json")).getPingduoduoCancelableKeyWordList());
+                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME)).getPingduoduoCancelableKeyWordList());
                 break;
             case ApplicationIndexDefinition.MEITUAN:
                 DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,"KeyWordData.json")).getMeituanCancelableKeyWordList());
+                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME)).getMeituanCancelableKeyWordList());
                 break;
             default:
                 break;

@@ -3,6 +3,7 @@ package github.kutouzi.actassistant;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -16,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gsls.gt.GT;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +27,7 @@ import github.kutouzi.actassistant.adapter.ClientViewAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
 import github.kutouzi.actassistant.entity.ClientViewData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
+import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
 
@@ -163,38 +167,64 @@ public class MainActivity extends AppCompatActivity  {
         EditText minSwipeupTimeEditText = findViewById(R.id.minSwipeupTimeEditText);
         EditText maxDelayTimeEditText = findViewById(R.id.maxDelayTimeEditText);
         EditText minDelayTimeEditText = findViewById(R.id.minDelayTimeEditText);
-        SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this,"SwipeUpData.json");
+        SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME);
         Optional.ofNullable(swipeUpData).ifPresent(s -> {
-            maxSwipeupTimeEditText.setText(s.getRandomMaxSwipeupValue());
-            minSwipeupTimeEditText.setText(s.getRandomMinSwipeupValue());
-            maxDelayTimeEditText.setText(s.getRandomMaxSwipeupValue());
-            minDelayTimeEditText.setText(s.getRandomMinDelayValue());
+            maxSwipeupTimeEditText.setText(String.valueOf(s.getRandomMaxSwipeupValue()));
+            minSwipeupTimeEditText.setText(String.valueOf(s.getRandomMinSwipeupValue()));
+            maxDelayTimeEditText.setText(String.valueOf(s.getRandomMaxDelayValue()));
+            minDelayTimeEditText.setText(String.valueOf(s.getRandomMinDelayValue()));
         });
         maxSwipeupTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
             if(!hasFocus){
                 Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    s.setRandomMaxSwipeupValue(Integer.parseInt(maxSwipeupTimeEditText.getText().toString()));
+                    if(Integer.parseInt(maxSwipeupTimeEditText.getText().toString()) >= s.getRandomMinSwipeupValue()){
+                        // 检测是否大于等于当前最小值
+                        s.setRandomMaxSwipeupValue(Integer.parseInt(maxSwipeupTimeEditText.getText().toString()));
+                        JsonFileIO.writeSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME,s);
+                    }else {
+                        // 小于的话就设置回去
+                        s.setRandomMaxSwipeupValue(s.getRandomMaxSwipeupValue());
+                        GT.toast_time("写入失败：错误的值",3000);
+                    }
                 });
             }
         });
         minSwipeupTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
             if(!hasFocus){
                 Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    s.setRandomMinSwipeupValue(Integer.parseInt(minSwipeupTimeEditText.getText().toString()));
+                    if(Integer.parseInt(minSwipeupTimeEditText.getText().toString()) <= s.getRandomMaxSwipeupValue()){
+                        s.setRandomMinSwipeupValue(Integer.parseInt(minSwipeupTimeEditText.getText().toString()));
+                        JsonFileIO.writeSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME,s);
+                    }else {
+                        s.setRandomMinSwipeupValue(s.getRandomMinSwipeupValue());
+                        GT.toast_time("写入失败：错误的值",3000);
+                    }
                 });
             }
         });
         maxDelayTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
             if(!hasFocus){
                 Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    s.setRandomMaxDelayValue(Integer.parseInt(maxDelayTimeEditText.getText().toString()));
+                    if(Integer.parseInt(maxDelayTimeEditText.getText().toString()) >= s.getRandomMinDelayValue()) {
+                        s.setRandomMaxDelayValue(Integer.parseInt(maxDelayTimeEditText.getText().toString()));
+                        JsonFileIO.writeSwipeUpDataJson(this, JsonFileDefinition.SWIPEUP_JSON_NAME, s);
+                    }else {
+                        s.setRandomMaxDelayValue(s.getRandomMaxDelayValue());
+                        GT.toast_time("写入失败：错误的值",3000);
+                    }
                 });
             }
         });
         minDelayTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
             if(!hasFocus){
                 Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    s.setRandomMinDelayValue(Integer.parseInt(minDelayTimeEditText.getText().toString()));
+                    if(Integer.parseInt(minDelayTimeEditText.getText().toString()) <= s.getRandomMaxDelayValue()) {
+                        s.setRandomMinDelayValue(Integer.parseInt(minDelayTimeEditText.getText().toString()));
+                        JsonFileIO.writeSwipeUpDataJson(this, JsonFileDefinition.SWIPEUP_JSON_NAME, s);
+                    }else {
+                        s.setRandomMinDelayValue(s.getRandomMinDelayValue());
+                        GT.toast_time("写入失败：错误的值",3000);
+                    }
                 });
             }
         });

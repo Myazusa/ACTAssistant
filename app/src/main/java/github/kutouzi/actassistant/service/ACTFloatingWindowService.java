@@ -263,9 +263,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
         //创建返回开关
         _returnMainActivityButton = _windowView.findViewById(R.id.returnMainActivityButton);
         _returnMainActivityButton.setOnClickListener(v->{
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(intent);
             onInterrupt();
         });
     }

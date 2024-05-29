@@ -3,6 +3,7 @@ package github.kutouzi.actassistant;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -16,7 +17,9 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +43,7 @@ import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.enums.KeyWordListDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
+import github.kutouzi.actassistant.util.DrawableUtil;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -150,24 +154,50 @@ public class MainActivity extends AppCompatActivity  {
         if(!_allButtonInWindowStartedState){
             _settingButton.setEnabled(true);
             _addClientButton.setEnabled(true);
+            DrawableUtil.setDrawableBackground(this,_settingButton,1,R.color.button_color);
+            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.button_color);
             _allButtonInWindowStartedState = true;
             Log.i(_TAG,"主菜单其他按钮已启用");
         }else {
             _settingButton.setEnabled(false);
             _addClientButton.setEnabled(false);
+            DrawableUtil.setDrawableBackground(this,_settingButton,1,R.color.disable_button_color);
+            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.disable_button_color);
             _allButtonInWindowStartedState = false;
             Log.i(_TAG,"主菜单其他按钮已禁用");
         }
 
     }
+
+    private void switchOthersButtonStates(){
+        if(!_allButtonInWindowStartedState){
+            _startACTFloatingWindowServiceButton.setEnabled(true);
+            _addClientButton.setEnabled(true);
+            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.button_color);
+            DrawableUtil.setDrawableBackground(this,_startACTFloatingWindowServiceButton,1,R.color.button_color);
+            _allButtonInWindowStartedState = true;
+            Log.i(_TAG,"主菜单其他按钮已启用");
+        }else {
+            _startACTFloatingWindowServiceButton.setEnabled(false);
+            _addClientButton.setEnabled(false);
+            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.disable_button_color);
+            DrawableUtil.setDrawableBackground(this,_startACTFloatingWindowServiceButton,1,R.color.disable_button_color);
+            _allButtonInWindowStartedState = false;
+            Log.i(_TAG,"主菜单其他按钮已禁用");
+        }
+
+    }
+
     private void createSettingSwitch(){
         _settingButton = findViewById(R.id.settingButton);
         _settingButton.setOnClickListener(v->{
             if(_optionView.getVisibility() == View.GONE){
                 _optionView.setVisibility(View.VISIBLE);
+                switchOthersButtonStates();
             }
             else {
                 _optionView.setVisibility(View.GONE);
+                switchOthersButtonStates();
             }
         });
     }

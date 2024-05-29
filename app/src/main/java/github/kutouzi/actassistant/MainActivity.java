@@ -23,6 +23,7 @@ import com.gsls.gt.GT;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private final int _recyclerViewSpanCount = 3;
     private boolean _isStartACTFloatingWindowServiceButtonPressed = false;
-    private static String listName = "";
+    public static String listName = "";
 
     @Override
     protected void onDestroy() {
@@ -236,12 +237,13 @@ public class MainActivity extends AppCompatActivity  {
                 });
             }
         });
+
+
         //KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME);
         Spinner keyWordJsonSpinner = findViewById(R.id.keyWordJsonSpinner);
         SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this, Stream.of(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST,
                 KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST).collect(Collectors.toList()));
         keyWordJsonSpinner.setAdapter(spinnerAdapter);
-        // TODO 设置list里内容的显示
         keyWordJsonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -250,14 +252,17 @@ public class MainActivity extends AppCompatActivity  {
 
                 }else if(listName.equals(KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST)){
                     RecyclerView keyWordView = findViewById(R.id.keyWordView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(JsonFileIO.readKeyWordDataJson(getApplication(),JsonFileDefinition.KEYWORD_JSON_NAME).getMeituanCancelableKeyWordList());
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(getApplication(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
                     keyWordView.setAdapter(keyWordViewAdapter);
+                    createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST)){
 
                 }else if(listName.equals(KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST)){
-
+                    RecyclerView keyWordView = findViewById(R.id.keyWordView);
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(getApplication(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
+                    keyWordView.setAdapter(keyWordViewAdapter);
+                    createAddKeyWordItem(keyWordViewAdapter);
                 }
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -267,6 +272,18 @@ public class MainActivity extends AppCompatActivity  {
 
         _optionView.setVisibility(View.GONE);
 
+    }
+    private void createAddKeyWordItem(KeyWordViewAdapter keyWordViewAdapter){
+        ImageButton addKeyWordButton = findViewById(R.id.addKeyWordButton);
+        EditText addKeyWordEditText = findViewById(R.id.addKeyWordEditText);
+        addKeyWordButton.setOnClickListener(v -> {
+            String s = addKeyWordEditText.getText().toString();
+            if (!s.isEmpty()){
+                keyWordViewAdapter.addItem(s,v);
+            }else {
+                GT.toast_time("未输入任何东西",3000);
+            }
+        });
     }
 
     private void createAddClientSwitch(){

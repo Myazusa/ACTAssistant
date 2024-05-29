@@ -180,18 +180,28 @@
                 </androidx.recyclerview.widget.RecyclerView>
 
                 <LinearLayout
-                    android:id="@+id/addKeyWordButton"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/addKeyWordImage"
+                    <EditText
+                        android:id="@+id/addKeyWordEditText"
                         android:layout_width="wrap_content"
-                        android:layout_height="60dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:ems="10"
+                        android:gravity="start|top"
+                        android:inputType="textMultiLine" />
+
+                    <ImageButton
+                        android:id="@+id/addKeyWordButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="#00FFFFFF"
                         app:srcCompat="@android:drawable/ic_menu_add" />
+
                 </LinearLayout>
 
             </LinearLayout>

@@ -210,7 +210,7 @@
         android:id="@+id/menuLayout"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:background="#408E8E8E"
+        android:background="@color/button_background_color"
         android:orientation="horizontal"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -221,7 +221,7 @@
             android:id="@+id/addClientButton"
             android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:backgroundTint="#8090C1E1"
+            android:background="@drawable/main_button_rounded_border"
             android:contentDescription="@string/addConnectButtonDescription"
             app:srcCompat="@android:drawable/ic_menu_add" />
 
@@ -229,7 +229,7 @@
             android:id="@+id/serviceWindowButton"
             android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:backgroundTint="#80D69AB4"
+            android:background="@drawable/main_button_rounded_border"
             android:contentDescription="@string/startACTButtonDescription"
             android:padding="@dimen/cardview_default_radius"
             app:srcCompat="@android:drawable/ic_lock_power_off" />
@@ -238,7 +238,7 @@
             android:id="@+id/settingButton"
             android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:backgroundTint="#8090C1E1"
+            android:background="@drawable/main_button_rounded_border"
             android:contentDescription="@string/settingButtonDescription"
             android:padding="@dimen/cardview_default_radius"
             app:srcCompat="@android:drawable/ic_menu_preferences" />

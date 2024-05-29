@@ -1,6 +1,7 @@
 package github.kutouzi.actassistant.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -17,31 +18,37 @@ import github.kutouzi.actassistant.R;
 import github.kutouzi.actassistant.enums.KeyWordListDefinition;
 
 public class KeyWordJsonSpinnerAdapter extends ArrayAdapter<String>{
-    private final List<String> constraintLayoutList = Stream.of(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST,
-            KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST).collect(Collectors.toList());
+    private final List<String> constraintLayoutList;
+    private Context context;
 
-    public KeyWordJsonSpinnerAdapter(@NonNull Context context, int resource) {
-        super(context, resource);
+    public KeyWordJsonSpinnerAdapter(@NonNull Context context, @NonNull List<String> constraintLayoutList) {
+        super(context, 0, constraintLayoutList);
+        this.constraintLayoutList = constraintLayoutList;
+        this.context = context;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if (convertView == null) {
-            convertView = parent.findViewById(R.id.keyWordJsonSpinner);
-        }
-        TextView textView = convertView.findViewById(R.id.keyWordListTextView);
-        textView.setText(constraintLayoutList.get(position));
-        return convertView;
+        return createViewFromResource(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item);
     }
 
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if (convertView == null) {
-            convertView = parent.findViewById(R.id.keyWordJsonSpinner);
+        return createViewFromResource(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item);
+    }
+
+    private View createViewFromResource(int position, View convertView, ViewGroup parent, int resource) {
+        View view = convertView;
+        if (view == null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            view = inflater.inflate(R.layout.key_word_list_view, parent, false);
         }
-        TextView textView = convertView.findViewById(R.id.keyWordListTextView);
-        textView.setText(constraintLayoutList.get(position));
-        return convertView;
+
+        TextView textView = view.findViewById(R.id.keyWordListTextView);
+        String item = constraintLayoutList.get(position);
+        textView.setText(item);
+
+        return view;
     }
 }

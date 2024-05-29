@@ -3,12 +3,12 @@ package github.kutouzi.actassistant;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
@@ -24,12 +24,14 @@ import com.gsls.gt.GT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import github.kutouzi.actassistant.adapter.ClientViewAdapter;
 import github.kutouzi.actassistant.adapter.KeyWordJsonSpinnerAdapter;
+import github.kutouzi.actassistant.adapter.KeyWordViewAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
 import github.kutouzi.actassistant.entity.ClientViewData;
-import github.kutouzi.actassistant.entity.KeyWordData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.enums.KeyWordListDefinition;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private final int _recyclerViewSpanCount = 3;
     private boolean _isStartACTFloatingWindowServiceButtonPressed = false;
+    private static String listName = "";
 
     @Override
     protected void onDestroy() {
@@ -235,8 +238,33 @@ public class MainActivity extends AppCompatActivity  {
         });
         //KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME);
         Spinner keyWordJsonSpinner = findViewById(R.id.keyWordJsonSpinner);
-        SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this,R.layout.key_word_list_view);
+        SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this, Stream.of(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST,
+                KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST).collect(Collectors.toList()));
         keyWordJsonSpinner.setAdapter(spinnerAdapter);
+        // TODO 设置list里内容的显示
+        keyWordJsonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                listName = (String) parent.getItemAtPosition(position);
+                if (listName.equals(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST)) {
+
+                }else if(listName.equals(KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST)){
+                    RecyclerView keyWordView = findViewById(R.id.keyWordView);
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(JsonFileIO.readKeyWordDataJson(getApplication(),JsonFileDefinition.KEYWORD_JSON_NAME).getMeituanCancelableKeyWordList());
+                    keyWordView.setAdapter(keyWordViewAdapter);
+                }else if(listName.equals(KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST)){
+
+                }else if(listName.equals(KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST)){
+
+                }
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         _optionView.setVisibility(View.GONE);
 
     }

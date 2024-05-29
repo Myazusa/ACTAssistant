@@ -11,12 +11,14 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gsls.gt.GT;
@@ -238,7 +240,6 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-
         //KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME);
         Spinner keyWordJsonSpinner = findViewById(R.id.keyWordJsonSpinner);
         SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this, Stream.of(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST,
@@ -251,16 +252,18 @@ public class MainActivity extends AppCompatActivity  {
                 if (listName.equals(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST)) {
 
                 }else if(listName.equals(KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST)){
-                    RecyclerView keyWordView = findViewById(R.id.keyWordView);
+                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
                     KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(getApplication(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
-                    keyWordView.setAdapter(keyWordViewAdapter);
+                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
+                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST)){
 
                 }else if(listName.equals(KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST)){
-                    RecyclerView keyWordView = findViewById(R.id.keyWordView);
+                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
                     KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(getApplication(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
-                    keyWordView.setAdapter(keyWordViewAdapter);
+                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
+                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
                 }
             }

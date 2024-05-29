@@ -279,19 +279,28 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 listName = (String) parent.getItemAtPosition(position);
+                // TODO：bug Json可能有列表被清空的情况
                 if (listName.equals(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST)) {
-
+                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoClickableKeyWordList());
+                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
+                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+                    createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(getApplication(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST)){
-
+                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanClickableKeyWordList());
+                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
+                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+                    createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(getApplication(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);

@@ -3,7 +3,6 @@ package github.kutouzi.actassistant;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -12,18 +11,16 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
-import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.gsls.gt.GT;
 
 import java.util.ArrayList;
@@ -42,15 +39,11 @@ import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.enums.KeyWordListDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
+import github.kutouzi.actassistant.network.JsonFileNIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
 import github.kutouzi.actassistant.util.DrawableUtil;
 
 public class MainActivity extends AppCompatActivity  {
-
-    static {
-        System.loadLibrary("actassistant");
-    }
-
     public static final String CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE = "github.kutouzi.actassistant.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE";
 
     private static final String _TAG = MainActivity.class.getName();
@@ -62,6 +55,7 @@ public class MainActivity extends AppCompatActivity  {
     private ImageButton _settingButton;
     private ImageButton _addClientButton;
     private ImageButton _startACTFloatingWindowServiceButton;
+    private ImageButton _uploadButton;
     private RecyclerView _clientRecyclerView;
     private ScrollView _optionView;
 
@@ -86,8 +80,8 @@ public class MainActivity extends AppCompatActivity  {
         createSettingSwitch();
         createAddClientSwitch();
         createStartFloatingServiceWindowSwitch();
+        createUploadSwitch();
         createOptionView();
-
     }
 
     private void createClientView(){
@@ -330,6 +324,14 @@ public class MainActivity extends AppCompatActivity  {
 
     private void createAddClientSwitch(){
         _addClientButton = findViewById(R.id.addClientButton);
+    }
+
+    private void createUploadSwitch(){
+        _uploadButton = findViewById(R.id.uploadButton);
+        _uploadButton.setOnClickListener(v -> {
+            SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME);
+            JsonFileNIO.sendSwipeUpJsonToQtClient(JsonFileIO._gson.toJson(swipeUpData));
+        });
     }
     private void requestCreateACTFloatingWindow() {
         sendBroadcast(new Intent(CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE).putExtra("key","Create"));

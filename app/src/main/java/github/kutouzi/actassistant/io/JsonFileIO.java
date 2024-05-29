@@ -15,7 +15,7 @@ import github.kutouzi.actassistant.entity.SwipeUpData;
 
 public class JsonFileIO extends FileIO {
     private static final String _TAG = JsonFileIO.class.getName();
-    private static final Gson _gson = new Gson();
+    public static final Gson _gson = new Gson();
     public static boolean writeSwipeUpDataJson(Context context, String jsonFileName, SwipeUpData swipeUpData) {
         if (!isFileExists(context,jsonFileName)){
             // 如果文件不存在就先写入默认值

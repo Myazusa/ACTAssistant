@@ -217,6 +217,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+
+
         <ImageButton
             android:id="@+id/addClientButton"
             android:layout_width="60dp"
@@ -242,6 +244,16 @@
             android:contentDescription="@string/settingButtonDescription"
             android:padding="@dimen/cardview_default_radius"
             app:srcCompat="@android:drawable/ic_menu_preferences" />
+
+        <ImageButton
+            android:id="@+id/uploadButton"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/main_button_rounded_border"
+            android:contentDescription="@string/settingButtonDescription"
+            android:padding="@dimen/cardview_default_radius"
+            app:srcCompat="@android:drawable/ic_menu_upload" />
 
     </LinearLayout>
 

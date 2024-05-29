@@ -22,14 +22,6 @@ import github.kutouzi.actassistant.enums.KeyWordListDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
 
 public class KeyWordViewAdapter extends RecyclerView.Adapter<KeyWordViewAdapter.ViewHolder> {
-    public List<String> getKeyWordList() {
-        return keyWordList;
-    }
-
-    public void setKeyWordList(List<String> keyWordList) {
-        this.keyWordList = keyWordList;
-    }
-
     private List<String> keyWordList;
     public KeyWordViewAdapter(List<String> keyWordList) {
         this.keyWordList = keyWordList;
@@ -53,6 +45,7 @@ public class KeyWordViewAdapter extends RecyclerView.Adapter<KeyWordViewAdapter.
         });
         holder.removeButton.setOnClickListener(v -> {
             keyWordList.remove(position);
+            updateJsonFile(v);
             notifyItemRemoved(position);
         });
     }

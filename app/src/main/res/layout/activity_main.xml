@@ -22,7 +22,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="70dp"
         android:background="@drawable/option_rounded_border"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,8 +33,7 @@
             android:layout_height="wrap_content"
 
             android:orientation="vertical"
-            android:padding="20dp"
-            android:visibility="visible">
+            android:padding="20dp">
 
             <LinearLayout
                 android:id="@+id/maxSwipeupTime"
@@ -172,12 +171,10 @@
                     android:layout_weight="1" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/keyWordView"
+                    android:id="@+id/keyWordRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="381dp"
-                    android:layout_weight="1">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    android:layout_weight="1"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"

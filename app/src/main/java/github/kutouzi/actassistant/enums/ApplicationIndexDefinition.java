@@ -1,12 +1,8 @@
 package github.kutouzi.actassistant.enums;
 
-public class ApplicationDefinition {
+public class ApplicationIndexDefinition {
     public static final int NULLAPP = 0;
     public static final int PINGDUODUO = 1 ;
-
-    public static final String PINGDUODUO_PAKAGENAME = "com.xunmeng.pinduoduo";
-
-    // 美团：
     public static final int MEITUAN = 2 ;
 
 

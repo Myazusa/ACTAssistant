@@ -18,7 +18,7 @@
 
         <github.kutouzi.actassistant.view.ToggleButtonLayout
             android:id="@+id/startApplicationButton"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/button_rounded_border"
@@ -37,7 +37,7 @@
 
         <github.kutouzi.actassistant.view.ToggleButtonLayout
             android:id="@+id/scanApplicationButton"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/button_rounded_border"
@@ -56,7 +56,7 @@
 
         <github.kutouzi.actassistant.view.ToggleButtonLayout
             android:id="@+id/listeningDialogButton"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/button_rounded_border"
@@ -76,7 +76,7 @@
 
         <github.kutouzi.actassistant.view.ToggleButtonLayout
             android:id="@+id/swipeUpButton"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/button_rounded_border"
@@ -95,7 +95,7 @@
 
         <github.kutouzi.actassistant.view.ToggleButtonLayout
             android:id="@+id/returnMainActivityButton"
-            android:layout_width="60dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@drawable/button_rounded_border"

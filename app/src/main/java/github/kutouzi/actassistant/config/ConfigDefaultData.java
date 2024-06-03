@@ -21,4 +21,7 @@ public class ConfigDefaultData {
     // 控制上划所耗的时间
     public static final int defaultRandomMaxDelayValue = 400;
     public static final int defaultRandomMinDelayValue = 200;
+
+    public static final String defaultLocalServerIPAddress = "192.168.1.100";
+    public static final String defaultLocalServerPort = "48802";
 }

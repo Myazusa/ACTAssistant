@@ -4,7 +4,8 @@ public class JsonFileNIO {
     static {
         System.loadLibrary("LibJsonFileNIO");
     }
-    public static native void sendSwipeUpJsonToQtClient(String jsonData);
+    public static native void sendSwipeUpJsonToQt(String jsonData);
 
-    public static native String receiveSwipeUpJsonFromQtClient();
+    public static native String receiveSwipeUpJsonFromQt();
+
 }

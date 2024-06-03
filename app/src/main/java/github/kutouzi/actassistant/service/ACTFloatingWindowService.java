@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
+import github.kutouzi.actassistant.entity.KeyWordData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.ApplicationIndexDefinition;
 import github.kutouzi.actassistant.enums.ApplicationPakageNameDefinition;
@@ -331,12 +332,13 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void switchFunctionToDialog(AccessibilityNodeInfo info){
         switch (_scanApplicationFlag) {
             case ApplicationIndexDefinition.PINGDUODUO:
+                KeyWordData keyWordData = Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME));
                 DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME)).getPingduoduoCancelableKeyWordList());
+                        keyWordData.getPingduoduoCancelableKeyWordList());
                 break;
             case ApplicationIndexDefinition.MEITUAN:
                 DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME)).getMeituanCancelableKeyWordList());
+                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
                 break;
             default:
                 break;

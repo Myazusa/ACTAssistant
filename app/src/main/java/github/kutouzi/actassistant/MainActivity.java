@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
 import com.gsls.gt.GT;
 
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import github.kutouzi.actassistant.adapter.KeyWordJsonSpinnerAdapter;
 import github.kutouzi.actassistant.adapter.KeyWordViewAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
 import github.kutouzi.actassistant.entity.ClientViewData;
+import github.kutouzi.actassistant.entity.KeyWordData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.enums.KeyWordListDefinition;
@@ -58,8 +58,9 @@ public class MainActivity extends AppCompatActivity  {
     private ImageButton _uploadButton;
     private RecyclerView _clientRecyclerView;
     private ScrollView _optionView;
+    private ScrollView _uploadLayout;
 
-    private final int _recyclerViewSpanCount = 3;
+    private final int _recyclerViewSpanCount = 2;
     private boolean _isStartACTFloatingWindowServiceButtonPressed = false;
     public static String listName = "";
 
@@ -264,7 +265,6 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        //KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME);
         Spinner keyWordJsonSpinner = findViewById(R.id.keyWordJsonSpinner);
         SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this, Stream.of(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST,
                 KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST).collect(Collectors.toList()));
@@ -328,9 +328,24 @@ public class MainActivity extends AppCompatActivity  {
 
     private void createUploadSwitch(){
         _uploadButton = findViewById(R.id.uploadButton);
-        _uploadButton.setOnClickListener(v -> {
-            SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME);
-            JsonFileNIO.sendSwipeUpJsonToQtClient(JsonFileIO._gson.toJson(swipeUpData));
+        _uploadLayout = findViewById(R.id.uploadLayout);
+        _uploadLayout.setVisibility(View.GONE);
+        _uploadButton.setOnClickListener(view -> {
+            if(_uploadLayout.getVisibility() == View.GONE){
+                EditText ip1EditText = findViewById(R.id.ip1EditView);
+                EditText ip2EditText = findViewById(R.id.ip2EditView);
+                EditText ip3EditText = findViewById(R.id.ip3EditView);
+                EditText ip4EditText = findViewById(R.id.ip4EditView);
+                // TODO:获取ip地址，转化对象存储
+
+                ImageButton sendToServerButton = findViewById(R.id.sendToServerButton);
+                sendToServerButton.setOnClickListener(v->{
+                    SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME);
+                    JsonFileNIO.sendSwipeUpJsonToQt(JsonFileIO._gson.toJson(swipeUpData));
+                    KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME);
+                    JsonFileNIO.sendSwipeUpJsonToQt(JsonFileIO._gson.toJson(keyWordData));
+                });
+            }
         });
     }
     private void requestCreateACTFloatingWindow() {

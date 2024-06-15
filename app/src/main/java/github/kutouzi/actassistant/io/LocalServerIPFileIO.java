@@ -8,9 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import github.kutouzi.actassistant.config.ConfigDefaultData;
+import github.kutouzi.actassistant.config.DataDefaultConfig;
 import github.kutouzi.actassistant.entity.LocalServerIPData;
-import github.kutouzi.actassistant.entity.SwipeUpData;
 
 public class LocalServerIPFileIO extends FileIO{
     private static final String _TAG = LocalServerIPFileIO.class.getName();
@@ -31,7 +30,7 @@ public class LocalServerIPFileIO extends FileIO{
         return true;
     }
     private static boolean writeDefaultLocalServerIPDataJson(Context context,String jsonFileName){
-        LocalServerIPData localServerIPData = new LocalServerIPData(ConfigDefaultData.defaultLocalServerIPAddress,ConfigDefaultData.defaultLocalServerPort);
+        LocalServerIPData localServerIPData = new LocalServerIPData(DataDefaultConfig.defaultLocalServerIPAddress, DataDefaultConfig.defaultLocalServerPort);
         String jsonString = _gson.toJson(localServerIPData);
         try (FileOutputStream fileOutputStream = context.openFileOutput(jsonFileName, Context.MODE_PRIVATE)) {
             fileOutputStream.write(jsonString.getBytes());

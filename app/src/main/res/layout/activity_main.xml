@@ -151,7 +151,8 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="70dp"
         android:background="@drawable/option_rounded_border"
-        android:visibility="gone"
+        android:padding="15dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -160,9 +161,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="15dp">
 
             <LinearLayout
                 android:id="@+id/maxSwipeupTime"
@@ -174,7 +174,7 @@
                     android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="上划最大时间间隔"
                     android:textAlignment="center"
@@ -183,9 +183,9 @@
 
                 <EditText
                     android:id="@+id/maxSwipeupTimeEditText"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:ems="10"
                     android:gravity="center"
                     android:hint="0"
@@ -193,6 +193,17 @@
                     android:lines="1"
                     android:maxLength="5"
                     android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/danwei1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
 
             </LinearLayout>
 
@@ -206,7 +217,7 @@
                     android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="上划最小时间间隔"
                     android:textAlignment="center"
@@ -214,9 +225,9 @@
 
                 <EditText
                     android:id="@+id/minSwipeupTimeEditText"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
                     android:ems="10"
                     android:gravity="center"
                     android:hint="0"
@@ -224,6 +235,17 @@
                     android:lines="1"
                     android:maxLength="5"
                     android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/danwei2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
@@ -236,7 +258,7 @@
                     android:id="@+id/textView3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="上划最大时间"
                     android:textAlignment="center"
@@ -244,9 +266,9 @@
 
                 <EditText
                     android:id="@+id/maxDelayTimeEditText"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
                     android:ems="10"
                     android:gravity="center"
                     android:hint="0"
@@ -254,6 +276,17 @@
                     android:lines="1"
                     android:maxLength="3"
                     android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/danwei3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
             </LinearLayout>
 
             <LinearLayout
@@ -266,7 +299,7 @@
                     android:id="@+id/textView4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:gravity="center"
                     android:text="上划最小时间"
                     android:textAlignment="center"
@@ -274,9 +307,9 @@
 
                 <EditText
                     android:id="@+id/minDelayTimeEditText"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
                     android:ems="10"
                     android:gravity="center"
                     android:hint="0"
@@ -285,13 +318,120 @@
                     android:maxLength="3"
                     android:textAlignment="center" />
 
+                <TextView
+                    android:id="@+id/danwei4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/switchApplicationTime"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView12"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="切换应用时间间隔"
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
+
+                <EditText
+                    android:id="@+id/switchApplicationTimeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="0"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="4"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/danwei5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="分钟"
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/autoScanApplication"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView10"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="开启自动搜索"
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
+
+                <github.kutouzi.actassistant.view.ToggleButtonLayout
+                    android:id="@+id/autoScanApplicationButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/option_button_border"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/autoScanApplicationButtonText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:gravity="center"
+                        android:text="关闭"
+                        android:textAlignment="center"
+                        android:textColor="#99000000" />
+
+                </github.kutouzi.actassistant.view.ToggleButtonLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/KeyWordLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/label2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="选择修改的项目："
+                    android:textAlignment="center"
+                    android:textColor="#000000" />
 
                 <Spinner
                     android:id="@+id/keyWordJsonSpinner"
@@ -299,36 +439,55 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/keyWordRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="381dp"
-                    android:layout_weight="1"/>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/label1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:lines="1"
+                        android:text="添加："
+                        android:textAlignment="center"
+                        android:textColor="#000000" />
+
                     <EditText
                         android:id="@+id/addKeyWordEditText"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:ems="10"
+                        android:ems="7"
                         android:gravity="start|top"
                         android:inputType="textMultiLine" />
 
                     <ImageButton
                         android:id="@+id/addKeyWordButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="#00FFFFFF"
                         app:srcCompat="@android:drawable/ic_menu_add" />
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tips1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="*需重启本应用生效"
+                    android:textColor="#FF3434" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/keyWordRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="381dp"
+                    android:layout_weight="1" />
 
             </LinearLayout>
 

@@ -1,7 +1,6 @@
 package github.kutouzi.actassistant.util;
 
 import android.accessibilityservice.GestureDescription;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Path;
 import android.os.Build;
@@ -9,8 +8,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import github.kutouzi.actassistant.entity.SwipeUpData;
-import github.kutouzi.actassistant.enums.JsonFileDefinition;
-import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
 
 public class ActionUtil {
@@ -33,7 +30,7 @@ public class ActionUtil {
             path.lineTo(endX, endY);
 
             GestureDescription.StrokeDescription stroke = new GestureDescription.StrokeDescription(
-                    path, 0, RandomtTimeUtil.getRandomDelayTillis(swipeUpData.getRandomMinDelayValue(),swipeUpData.getRandomMaxDelayValue()));
+                    path, 0, RandomUtil.getRandomDelayTillis(swipeUpData.getRandomMinDelayValue(),swipeUpData.getRandomMaxDelayValue()));
 
             GestureDescription gesture = new GestureDescription.Builder()
                     .addStroke(stroke)
@@ -57,7 +54,7 @@ public class ActionUtil {
         }
         pendingAction = () -> {
             ActionUtil.performSwipeUp(resources,swipeUpData,actFloatingWindowService);
-            handler.postDelayed(pendingAction, RandomtTimeUtil.getRandomDelayTillis(swipeUpData.getRandomMinSwipeupValue(),swipeUpData.getRandomMaxSwipeupValue()));
+            handler.postDelayed(pendingAction, RandomUtil.getRandomDelayTillis(swipeUpData.getRandomMinSwipeupValue(),swipeUpData.getRandomMaxSwipeupValue()));
         };
         handler.post(pendingAction);
     }

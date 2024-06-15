@@ -36,11 +36,13 @@ import github.kutouzi.actassistant.databinding.ActivityMainBinding;
 import github.kutouzi.actassistant.entity.ClientViewData;
 import github.kutouzi.actassistant.entity.KeyWordData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
+import github.kutouzi.actassistant.entity.SwitchApplicationData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
-import github.kutouzi.actassistant.enums.KeyWordListDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.network.JsonFileNIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
+import github.kutouzi.actassistant.service.MeituanService;
+import github.kutouzi.actassistant.service.PinduoduoService;
 import github.kutouzi.actassistant.util.DrawableUtil;
 
 public class MainActivity extends AppCompatActivity  {
@@ -265,34 +267,55 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+        EditText switchApplicationTimeEditText = findViewById(R.id.switchApplicationTimeEditText);
+        SwitchApplicationData switchApplicationData = JsonFileIO.readSwitchApplicationDataJson(this,JsonFileDefinition.SWITCHAPP_JSON_NAME);
+        Optional.ofNullable(switchApplicationData).ifPresent(s -> {
+            // 因为显示的是分钟，所以要除以60000得到分钟
+            switchApplicationTimeEditText.setText(String.valueOf(s.getSwitchApplicationTime()/60000));
+        });
+        switchApplicationTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
+            if(!hasFocus){
+                Optional.ofNullable(switchApplicationData).ifPresent(s->{
+                    // 获取文本得到的是分钟，需要乘以60000得到毫秒
+                    if(Integer.parseInt(switchApplicationTimeEditText.getText().toString()) * 60000 <= s.getSwitchApplicationTime()) {
+                        s.setSwitchApplicationTime(Integer.parseInt(switchApplicationTimeEditText.getText().toString()) * 60000);
+                        JsonFileIO.writeSwitchApplicationDataJson(this, JsonFileDefinition.SWITCHAPP_JSON_NAME, s);
+                    }else {
+                        s.setSwitchApplicationTime(s.getSwitchApplicationTime());
+                        GT.toast_time("写入失败：错误的值",3000);
+                    }
+                });
+            }
+        });
+
         Spinner keyWordJsonSpinner = findViewById(R.id.keyWordJsonSpinner);
-        SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this, Stream.of(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST,
-                KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST).collect(Collectors.toList()));
+        SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this, Stream.of(PinduoduoService.CLICKABLE_KEYWORD_LIST,
+                PinduoduoService.CANCELABLE_KEYWORD_LIST, MeituanService.CLICKABLE_KEYWORD_LIST,MeituanService.CANCELABLE_KEYWORD_LIST).collect(Collectors.toList()));
         keyWordJsonSpinner.setAdapter(spinnerAdapter);
         keyWordJsonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 listName = (String) parent.getItemAtPosition(position);
                 // TODO：bug Json可能有列表被清空的情况
-                if (listName.equals(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST)) {
+                if (listName.equals(PinduoduoService.CLICKABLE_KEYWORD_LIST)) {
                     RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
                     KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoClickableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
-                }else if(listName.equals(KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST)){
+                }else if(listName.equals(PinduoduoService.CANCELABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
                     KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
-                }else if(listName.equals(KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST)){
+                }else if(listName.equals(MeituanService.CLICKABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
                     KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanClickableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
-                }else if(listName.equals(KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST)){
+                }else if(listName.equals(MeituanService.CANCELABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
                     KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);

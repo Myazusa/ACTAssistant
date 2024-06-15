@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -18,27 +19,29 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.gsls.gt.GT;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
-import github.kutouzi.actassistant.entity.KeyWordData;
+import github.kutouzi.actassistant.config.ButtonStateConfig;
 import github.kutouzi.actassistant.entity.SwipeUpData;
-import github.kutouzi.actassistant.enums.ApplicationIndexDefinition;
-import github.kutouzi.actassistant.enums.ApplicationPakageNameDefinition;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.exception.PakageNotFoundException;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.util.ActionUtil;
 import github.kutouzi.actassistant.util.DialogUtil;
 import github.kutouzi.actassistant.util.DrawableUtil;
-import github.kutouzi.actassistant.util.MeituanUtil;
-import github.kutouzi.actassistant.util.PingduoduoUtil;
+import github.kutouzi.actassistant.util.PackageCheckUtil;
+import github.kutouzi.actassistant.util.RandomUtil;
 import github.kutouzi.actassistant.view.ToggleButtonLayout;
 
 
@@ -59,6 +62,8 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private ToggleButtonLayout _listeningDialogButton;
     private ToggleButtonLayout _startApplicationButton;
     private ToggleButtonLayout _swipeUpButton;
+    private ToggleButtonLayout _autoScanApplicationButton;
+    private TextView _autoScanApplicationButtonText;
 
     //////////////////////////////////
 
@@ -67,6 +72,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
     //全局标记相关
     private static int _scanApplicationFlag = 0;
     private boolean _isViewAdded = false;
+    private List<String> installedPackageList;
+    private CountDownTimer countDownTimer = null;
+
     //////////////////////////////////
 
     @Override
@@ -92,6 +100,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
                         createStartApplicationSwitch();
                         createReturnMainActivitySwitch();
                         createSwipeUpSwitch();
+                        createAutoScanApplicationSwitch();
 
                         createScanApplicationSwitch();
 
@@ -188,37 +197,101 @@ public class ACTFloatingWindowService extends AccessibilityService {
     }
 
     private void createStartApplicationSwitch(){
-        // 创建开启引用开关
+        // 创建开启应用开关
         _startApplicationButton = _windowView.findViewById(R.id.startApplicationButton);
+        installedPackageList = PackageCheckUtil.getInstalledPackageList(this);
         _startApplicationButton.setOnClickListener(v->{
-            try{
-                requestStartApplication(ApplicationPakageNameDefinition.PINGDUODUO_PAKAGENAME);
-                _startApplicationButton._isToggle = true;
-                _startApplicationButton.setEnabled(false);
-            }catch (PakageNotFoundException e){
-                Log.i(_TAG,e.getMessage());
-                GT.toast_time("自动开启应用失败，请手动打开",8000);
+            try {
+                if(!_startApplicationButton._isToggle){
+                    String startPackageName = RandomUtil.getRandomPackage(installedPackageList);
+                    Log.i(_TAG, "将打开：" + startPackageName);
+                    requestStartApplication(startPackageName);
+                    startSwitchApplicationTimer();
+                    _startApplicationButton._isToggle = true;
+                    if(_autoScanApplicationButton._isToggle){
+                        _scanApplicationButton.callOnClick();
+                    }
+                }else {
+                    if (countDownTimer != null){
+                        countDownTimer.cancel();
+                        Log.i(_TAG, "计时器被取消");
+                    }
+                    _startApplicationButton._isToggle = false;
+                }
+            } catch (PakageNotFoundException e) {
+                Log.i(_TAG, e.getMessage());
+                GT.toast_time("未找到应用，切换下一个", 8000);
+                _startApplicationButton.callOnClick();
             }
         });
     }
+    private void startSwitchApplicationTimer(){
+        if (countDownTimer != null){
+            countDownTimer.cancel();
+        }
+        countDownTimer = new CountDownTimer(Objects.requireNonNull(JsonFileIO.readSwitchApplicationDataJson(this, JsonFileDefinition.SWITCHAPP_JSON_NAME)).getSwitchApplicationTime(), 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+            @Override
+            public void onFinish() {
+                if(_listeningDialogButton._isToggle){
+                    _listeningDialogButton.callOnClick();
+                }
+                if(_swipeUpButton._isToggle){
+                    _swipeUpButton.callOnClick();
+                }
+                stopForegroundApplication();
+                Log.i(_TAG, "计时器正常结束");
+                _startApplicationButton._isToggle = false;
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                _startApplicationButton.callOnClick();
+            }
+        }.start();
+    }
 
-    private void requestStartApplication(String pakageName) throws PakageNotFoundException {
-        Intent intent = getPackageManager().getLaunchIntentForPackage(pakageName);
+    private void requestStartApplication(String applicationPackageNameDefinition) throws PakageNotFoundException {
+        Intent intent = getPackageManager().getLaunchIntentForPackage(applicationPackageNameDefinition);
         if (intent != null){
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             startActivity(intent);
         }else {
-            throw new PakageNotFoundException(ApplicationPakageNameDefinition.PINGDUODUO_PAKAGENAME);
+            throw new PakageNotFoundException(applicationPackageNameDefinition);
         }
+    }
 
+    private void stopForegroundApplication(){
+        for (int i = 0; i < 10; i++) {
+            performGlobalAction(GLOBAL_ACTION_BACK);
+        }
+    }
+
+    private void createAutoScanApplicationSwitch(){
+        _autoScanApplicationButton = _windowView.findViewById(R.id.autoScanApplicationButton);
+        _autoScanApplicationButton._isToggle = ButtonStateConfig.autoScanApplicationButtonState;
+        _autoScanApplicationButtonText = _windowView.findViewById(R.id.autoScanApplicationButtonText);
+        _autoScanApplicationButton.setOnClickListener(v -> {
+            if(_autoScanApplicationButton._isToggle){
+                _autoScanApplicationButtonText.setText("关闭自动");
+                _autoScanApplicationButton._isToggle = false;
+            }else {
+                _autoScanApplicationButton._isToggle = true;
+                _autoScanApplicationButtonText.setText("开启自动");
+            }
+            ButtonStateConfig.autoScanApplicationButtonState = _autoScanApplicationButton._isToggle;
+        });
     }
 
 
     private void createScanApplicationSwitch(){
         _scanApplicationButton = _windowView.findViewById(R.id.scanApplicationButton);
         _scanApplicationButton.setOnClickListener(v -> {
-            _scanApplicationFlag = PingduoduoUtil.scanPingduoduoApplication(getRootInActiveWindow().getPackageName())
-                    + MeituanUtil.scanMeituanApplication(getRootInActiveWindow().getPackageName());
+            _scanApplicationFlag = PinduoduoService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
+                    + MeituanService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName());
             applicationAnnounce();
             findApplicationAction();
         });
@@ -226,10 +299,18 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void findApplicationAction(){
         if(_scanApplicationFlag != 0){
             switch (_scanApplicationFlag){
-                case ApplicationIndexDefinition.PINGDUODUO:
-                    PingduoduoUtil.switchToVideo(getRootInActiveWindow());
-                case ApplicationIndexDefinition.MEITUAN:
-                    MeituanUtil.switchToVideo(getRootInActiveWindow());
+                case PinduoduoService.APPLICATION_INDEX:
+                    PinduoduoService.getInsatance().switchToVideo(getRootInActiveWindow());
+                case MeituanService.APPLICATION_INDEX:
+                    MeituanService.getInsatance().switchToVideo(getRootInActiveWindow());
+                case DouyinjisuService.APPLICATION_INDEX:
+                    DouyinjisuService.getInsatance().switchToVideo(getRootInActiveWindow());
+                case KuaishoujisuService.APPLICATION_INDEX:
+                    KuaishoujisuService.getInsatance().switchToVideo(getRootInActiveWindow());
+                case BaidujisuService.APPLICATION_INDEX:
+                    BaidujisuService.getInsatance().switchToVideo(getRootInActiveWindow());
+                case XiaohongshuService.APPLICATION_INDEX:
+                    XiaohongshuService.getInsatance().switchToVideo(getRootInActiveWindow());
             }
             if(!_swipeUpButton._isToggle){
                 // 如果没有被按下过
@@ -243,21 +324,33 @@ public class ACTFloatingWindowService extends AccessibilityService {
     }
     private void applicationAnnounce(){
         if(_scanApplicationFlag != 0) {
-            String s;
             switch (_scanApplicationFlag) {
-                case ApplicationIndexDefinition.PINGDUODUO:
-                    s = "拼多多";
-                    GT.toast_time("找到" + s + "应用", 1000);
+                case PinduoduoService.APPLICATION_INDEX:
+                    applicationAnnounceToast(PinduoduoService.NAME);
                     break;
-                case ApplicationIndexDefinition.MEITUAN:
-                    s = "美团";
-                    GT.toast_time("找到" + s + "应用", 1000);
+                case MeituanService.APPLICATION_INDEX:
+                    applicationAnnounceToast(MeituanService.NAME);
+                    break;
+                case DouyinjisuService.APPLICATION_INDEX:
+                    applicationAnnounceToast(DouyinjisuService.NAME);
+                    break;
+                case KuaishoujisuService.APPLICATION_INDEX:
+                    applicationAnnounceToast(KuaishoujisuService.NAME);
+                    break;
+                case BaidujisuService.APPLICATION_INDEX:
+                    applicationAnnounceToast(BaidujisuService.NAME);
+                    break;
+                case XiaohongshuService.APPLICATION_INDEX:
+                    applicationAnnounceToast(XiaohongshuService.NAME);
                     break;
                 default:
                     GT.toast_time("没找到受支持的应用", 1000);
                     break;
             }
         }
+    }
+    private void applicationAnnounceToast(String s){
+        GT.toast_time("找到" + s + "应用", 1000);
     }
 
     private void createReturnMainActivitySwitch(){
@@ -331,12 +424,11 @@ public class ACTFloatingWindowService extends AccessibilityService {
     }
     private void switchFunctionToDialog(AccessibilityNodeInfo info){
         switch (_scanApplicationFlag) {
-            case ApplicationIndexDefinition.PINGDUODUO:
-                KeyWordData keyWordData = Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME));
+            case PinduoduoService.APPLICATION_INDEX:
                 DialogUtil.cancelDialog(info, this,
-                        keyWordData.getPingduoduoCancelableKeyWordList());
+                        Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
                 break;
-            case ApplicationIndexDefinition.MEITUAN:
+            case MeituanService.APPLICATION_INDEX:
                 DialogUtil.cancelDialog(info, this,
                         Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
                 break;
@@ -348,13 +440,27 @@ public class ACTFloatingWindowService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if(_windowView != null){
-            if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
-                if (_listeningDialogButton._isToggle) {
-                    if(event.getSource() != null){
-                        switchFunctionToDialog(event.getSource());
-                    }
-                }
+            if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED){
+                listeningDialogAccessibilityEvent(event);
             }
+            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                //checkPackageNameAccessibilityEvent(event);
+            }
+        }
+    }
+
+    private void listeningDialogAccessibilityEvent(AccessibilityEvent event){
+        if (_listeningDialogButton._isToggle) {
+            if(event.getSource() != null){
+                switchFunctionToDialog(event.getSource());
+            }
+        }
+    }
+
+    private void checkPackageNameAccessibilityEvent(AccessibilityEvent event){
+        CharSequence packageName = event.getPackageName();
+        if (packageName != null) {
+            Log.d(_TAG, "前台应用包名为: " + packageName);
         }
     }
 

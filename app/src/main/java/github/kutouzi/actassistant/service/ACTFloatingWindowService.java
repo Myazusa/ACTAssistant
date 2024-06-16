@@ -35,6 +35,7 @@ import github.kutouzi.actassistant.R;
 import github.kutouzi.actassistant.config.ButtonStateConfig;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
+import github.kutouzi.actassistant.exception.FailedTaskException;
 import github.kutouzi.actassistant.exception.PakageNotFoundException;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.util.ActionUtil;
@@ -74,6 +75,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private boolean _isViewAdded = false;
     private List<String> installedPackageList;
     private CountDownTimer countDownTimer = null;
+    private static boolean _runTask = true;
 
     //////////////////////////////////
 
@@ -445,6 +447,25 @@ public class ACTFloatingWindowService extends AccessibilityService {
             }
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
                 //checkPackageNameAccessibilityEvent(event);
+            }
+            if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED){
+                if (_runTask){
+                    try{
+                        PinduoduoService.getInsatance().autoHeshuiTask(getRootInActiveWindow(),this);
+                    }catch (FailedTaskException e){
+                        Log.w(_TAG,e.getMessage());
+                    }
+                    try{
+                        MeituanService.getInsatance().autoCheckInTask(getRootInActiveWindow(),this);
+                    }catch (FailedTaskException e){
+                        Log.w(_TAG,e.getMessage());
+                    }
+                    try{
+                        DouyinjisuService.getInsatance().autoCheckInTask(getRootInActiveWindow(),this);
+                    }catch (FailedTaskException e){
+                        Log.w(_TAG,e.getMessage());
+                    }
+                }
             }
         }
     }

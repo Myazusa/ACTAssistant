@@ -28,4 +28,5 @@ public class KuaishoujisuService extends ApplicationService{
     public void switchToVideo(AccessibilityNodeInfo nodeInfo) {
 
     }
+
 }

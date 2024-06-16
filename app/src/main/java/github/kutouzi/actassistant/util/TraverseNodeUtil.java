@@ -22,6 +22,23 @@ public class TraverseNodeUtil {
             return null;
         }
     }
+    public static AccessibilityNodeInfo traverseUnClickableParent(AccessibilityNodeInfo node){
+        AccessibilityNodeInfo parent = node.getParent();
+        if(parent != null){
+            if(parent.getClassName().toString().contains("ViewGroup")){
+                Log.i(_TAG,"找到符合条件的ViewGroup");
+                return parent;
+            }
+            if(parent.getParent() == null){
+                return null;
+            }else {
+                return traverseParent(parent.getParent());
+            }
+        }
+        else {
+            return null;
+        }
+    }
 
     public void traverseNodes(AccessibilityNodeInfo node, int depth) {
         if (node == null) {

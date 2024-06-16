@@ -3,7 +3,7 @@ package github.kutouzi.actassistant.entity;
 import java.util.List;
 
 public class KeyWordData {
-    // TODO：设计不合理，需使用接口
+    // TODO：设计不合理
     public List<String> getPingduoduoClickableKeyWordList() {
         return pingduoduoClickableKeyWordList;
     }

@@ -1,7 +1,11 @@
 package github.kutouzi.actassistant.service;
 
+import android.accessibilityservice.AccessibilityService;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import github.kutouzi.actassistant.exception.FailedTaskException;
+import github.kutouzi.actassistant.util.ActionUtil;
 
 public class DouyinjisuService extends ApplicationService{
     public static final int APPLICATION_INDEX = 3;
@@ -27,5 +31,19 @@ public class DouyinjisuService extends ApplicationService{
     @Override
     public void switchToVideo(AccessibilityNodeInfo nodeInfo) {
 
+    }
+    public void autoCheckInTask(AccessibilityNodeInfo nodeInfo, AccessibilityService accessibilityService) throws FailedTaskException {
+        int layers = 0;
+        if(!ActionUtil.clickAction(nodeInfo.getWindow().getRoot(),"赚钱")){
+            ActionUtil.returnAction(accessibilityService,layers);
+            throw new FailedTaskException("未能打开任务页");
+        }
+        layers++;
+        if(!ActionUtil.findClickAction(nodeInfo.getWindow().getRoot(),"签到领奖励","立即签到")){
+            ActionUtil.returnAction(accessibilityService,layers);
+            throw new FailedTaskException("未能点击到签到");
+        }
+        layers++;
+        ActionUtil.returnAction(accessibilityService,layers);
     }
 }

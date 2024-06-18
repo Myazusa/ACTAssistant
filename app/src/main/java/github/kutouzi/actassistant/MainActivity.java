@@ -32,6 +32,8 @@ import github.kutouzi.actassistant.view.fragment.CilentListviewFragment;
 import github.kutouzi.actassistant.view.fragment.OptionFragment;
 import github.kutouzi.actassistant.view.fragment.UploadIpaddressFragment;
 
+
+//使用./gradlew assembleRelease来生成apk
 public class MainActivity extends AppCompatActivity  {
     private static final String _TAG = MainActivity.class.getName();
 

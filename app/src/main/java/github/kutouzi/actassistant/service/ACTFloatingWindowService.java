@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -123,18 +124,14 @@ public class ACTFloatingWindowService extends AccessibilityService {
         _listeningDialogButton.setEnabled(true);
         // 根据按钮状态开启和禁用
         _listeningDialogButton.setOnClickListener(v->{
-            if (_listeningDialogButton.isToggled()){
+            if (!_listeningDialogButton.isToggled()){
                 // 如果按钮已经被按过
-                switchButtonColor(_listeningDialogButton);
-                _listeningDialogButton.toggle();
                 switchOtherButtonStates();
                 cancelTimer();
                 Log.i(_TAG,"监听弹窗开关已被禁用");
             }else {
                 //switchFunctionToDialog();
                 // 如果按钮没按过
-                switchButtonColor(_listeningDialogButton);
-                _listeningDialogButton.toggle();
                 switchOtherButtonStates();
                 Log.i(_TAG,"监听弹窗开关已被启用");
             }
@@ -145,28 +142,29 @@ public class ACTFloatingWindowService extends AccessibilityService {
         _startApplicationButton = windowView.findViewById(R.id.startApplicationButton);
         installedPackageList = PackageCheckUtil.getInstalledPackageList(this);
         _startApplicationButton.setOnClickListener(v->{
-            try {
-                if(!_startApplicationButton.isToggled()){
-                    String startPackageName = RandomUtil.getRandomPackage(installedPackageList);
-                    Log.i(_TAG, "将打开：" + startPackageName);
+            if(installedPackageList.size() <=0){
+                GT.toast_time("没有安装任何受支持应用",5000);
+            }else {
+                String startPackageName = RandomUtil.getRandomPackage(installedPackageList);
+                Log.i(_TAG, "将打开：" + startPackageName);
+                try {
                     requestStartApplication(startPackageName);
-                    //OptionAutoSettingFragment.autoScanApplicationSwitch.isChecked()
-                    if(true) {
-                        startSwitchApplicationTimer();
-                        Log.i(_TAG,"计时器已启用");
-                    }
-                    _startApplicationButton.toggle();
-                    Thread.sleep(5000);
-                    _scanApplicationButton.callOnClick();
-                }else {
-                    _startApplicationButton.toggle();
+                }catch (PakageNotFoundException e) {
+                    Log.i(_TAG, e.getMessage());
+                    GT.toast_time("未找到应用，切换下一个", 8000);
+                    _startApplicationButton.callOnClick();
                 }
-            } catch (PakageNotFoundException e) {
-                Log.i(_TAG, e.getMessage());
-                GT.toast_time("未找到应用，切换下一个", 8000);
-                _startApplicationButton.callOnClick();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                //OptionAutoSettingFragment.autoScanApplicationSwitch.isChecked()
+                if(true) {
+                    startSwitchApplicationTimer();
+                    Log.i(_TAG,"计时器已启用");
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                _scanApplicationButton.callOnClick();
             }
         });
     }
@@ -272,6 +270,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void applicationAnnounce(){
         if(_scanApplicationFlag != 0) {
             switch (_scanApplicationFlag) {
+                case NullService.APPLICATION_INDEX:
+                    GT.toast_time("没找到受支持的应用", 1000);
+                    break;
                 case PinduoduoService.APPLICATION_INDEX:
                     applicationAnnounceToast(PinduoduoService.NAME);
                     break;
@@ -291,7 +292,6 @@ public class ACTFloatingWindowService extends AccessibilityService {
                     applicationAnnounceToast(XiaohongshuService.NAME);
                     break;
                 default:
-                    GT.toast_time("没找到受支持的应用", 1000);
                     break;
             }
         }
@@ -312,12 +312,10 @@ public class ACTFloatingWindowService extends AccessibilityService {
         //创建上划开关
         _swipeUpButton = windowView.findViewById(R.id.swipeUpButton);
         _swipeUpButton.setOnClickListener(v->{
-            if(_swipeUpButton.isToggled()){
+            if(!_swipeUpButton.isToggled()){
                 // 如果上划按钮被按过
                 // 停止上划
                 ActionUtil.removeSwipeAction();
-                switchButtonColor(_swipeUpButton);
-                _swipeUpButton.toggle();
                 switchOtherButtonStates();
                 cancelTimer();
                 GT.toast_time("上划结束",1000);
@@ -326,8 +324,6 @@ public class ACTFloatingWindowService extends AccessibilityService {
                 // 如果上划按钮没被按过
                 // 直接开始上划
                 ActionUtil.processSwipe(getResources(),swipeUpData,this);
-                switchButtonColor(_swipeUpButton);
-                _swipeUpButton.toggle();
                 switchOtherButtonStates();
                 GT.toast_time("上划开始",1000);
             }
@@ -341,9 +337,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
                 _returnMainActivityButton.setClickable(false);
                 _startApplicationButton.setClickable(false);
                 _scanApplicationButton.setClickable(false);
-                DrawableUtil.setDrawableBackground(this, _returnMainActivityButton, 1, R.color.disable_button_rounded_color);
-                DrawableUtil.setDrawableBackground(this, _startApplicationButton, 1, R.color.disable_button_rounded_color);
-                DrawableUtil.setDrawableBackground(this, _scanApplicationButton, 1, R.color.disable_button_rounded_color);
+                _returnMainActivityButton.setBackgroundColor(getResources().getColor(R.color.my_app_secondary_variant));
+                _startApplicationButton.setBackgroundColor(getResources().getColor(R.color.my_app_secondary_variant));
+                _scanApplicationButton.setBackgroundColor(getResources().getColor(R.color.my_app_secondary_variant));
                 Log.i(_TAG, "悬浮窗开启应用按钮和返回按钮已禁用");
             }
         }else{
@@ -352,23 +348,13 @@ public class ACTFloatingWindowService extends AccessibilityService {
                 _returnMainActivityButton.setClickable(true);
                 _startApplicationButton.setClickable(true);
                 _scanApplicationButton.setClickable(true);
-                DrawableUtil.setDrawableBackground(this, _returnMainActivityButton, 1, R.color.button_color);
-                DrawableUtil.setDrawableBackground(this, _startApplicationButton, 1, R.color.button_color);
-                DrawableUtil.setDrawableBackground(this, _scanApplicationButton, 1, R.color.button_color);
+                _returnMainActivityButton.setBackgroundColor(Color.parseColor("#5EE1BEE7"));
+                _startApplicationButton.setBackgroundColor(Color.parseColor("#5EE1BEE7"));
+                _scanApplicationButton.setBackgroundColor(Color.parseColor("#5EE1BEE7"));
+
                 Log.i(_TAG, "悬浮窗开启应用按钮和返回按钮已启用");
             }
         }
-    }
-
-    private void switchButtonColor(ToggleButton toggleButton){
-        if (toggleButton.isToggled()){
-            // 如果已经被按下，就变按下去的颜色
-            DrawableUtil.setDrawableBackground(this, toggleButton,1,R.color.button_color);
-        }else {
-            // 如果没被按下过，就变没按下去的颜色
-            DrawableUtil.setDrawableBackground(this, toggleButton,1,R.color.pressed_button_color);
-        }
-
     }
     private void switchFunctionToDialog(AccessibilityNodeInfo info){
         switch (_scanApplicationFlag) {

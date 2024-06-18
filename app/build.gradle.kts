@@ -20,11 +20,20 @@ android {
             }
         }
     }
+    signingConfigs {
+        create("release") {
+            keyAlias = "cnkey"
+            keyPassword = "112450"
+            storeFile = file("D:\\another\\秘钥\\cnkey.jks")
+            storePassword = "112450"
+        }
+    }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

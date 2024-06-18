@@ -37,7 +37,7 @@ public class ToggleButton extends MaterialButton {
             a.recycle();
         }
         updateButton();
-        setOnClickListener(v -> toggle());
+        //setOnClickListener(v -> toggle());
     }
 
     public void toggle() {
@@ -54,10 +54,6 @@ public class ToggleButton extends MaterialButton {
         updateButton();
     }
     private void updateButton() {
-        if (isToggled) {
-            setTextAppearance(R.style.Widget_ToggleButton_On);
-        } else {
-            setTextAppearance(R.style.Widget_ToggleButton_Off);
-        }
+
     }
 }

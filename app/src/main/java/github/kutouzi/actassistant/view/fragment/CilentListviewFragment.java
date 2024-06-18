@@ -47,7 +47,7 @@ public class CilentListviewFragment extends Fragment {
             // 创建数据集
             List<ClientViewData> clientViewData = new ArrayList<>();
             for (int i = 1; i <= 5; i++) {
-                clientViewData.add(new ClientViewData("192.168.1." + i, R.drawable.connection_lost));
+                clientViewData.add(new ClientViewData("192.168.1." + i, R.drawable.wifi_disabled__streamline_core));
             }
 
             // 创建adapter，准备为视图提供数据

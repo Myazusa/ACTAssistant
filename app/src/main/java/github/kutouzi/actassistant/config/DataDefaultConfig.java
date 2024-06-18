@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ConfigDefaultData {
+public class DataDefaultConfig {
     public static final List<String> defaultPingduoduoClickableKeyWordList = Stream.of("专属现金红包")
             .collect(Collectors.toList());
     public static final List<String> defaultMeituanClickableKeyWordList = Stream.of("開")
@@ -21,4 +21,10 @@ public class ConfigDefaultData {
     // 控制上划所耗的时间
     public static final int defaultRandomMaxDelayValue = 400;
     public static final int defaultRandomMinDelayValue = 200;
+
+    public static final String defaultLocalServerIPAddress = "192.168.1.100";
+    public static final String defaultLocalServerPort = "48802";
+
+    // 控制切换应用的时间间隔
+    public static final int defaultSwitchApplicationTime = 600000;
 }

@@ -11,11 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import github.kutouzi.actassistant.R;
-import github.kutouzi.actassistant.enums.KeyWordListDefinition;
 
 public class KeyWordJsonSpinnerAdapter extends ArrayAdapter<String>{
     private final List<String> constraintLayoutList;

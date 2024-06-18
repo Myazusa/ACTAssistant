@@ -3,112 +3,124 @@ package github.kutouzi.actassistant;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
-import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.gsls.gt.GT;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigationrail.NavigationRailView;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import github.kutouzi.actassistant.adapter.ClientViewAdapter;
-import github.kutouzi.actassistant.adapter.KeyWordJsonSpinnerAdapter;
-import github.kutouzi.actassistant.adapter.KeyWordViewAdapter;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
-import github.kutouzi.actassistant.entity.ClientViewData;
-import github.kutouzi.actassistant.entity.SwipeUpData;
-import github.kutouzi.actassistant.enums.JsonFileDefinition;
-import github.kutouzi.actassistant.enums.KeyWordListDefinition;
-import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
-import github.kutouzi.actassistant.util.DrawableUtil;
+import github.kutouzi.actassistant.util.FragmentUtil;
+import github.kutouzi.actassistant.view.fragment.CilentListviewFragment;
+import github.kutouzi.actassistant.view.fragment.OptionFragment;
+import github.kutouzi.actassistant.view.fragment.UploadIpaddressFragment;
 
 public class MainActivity extends AppCompatActivity  {
+    private static final String _TAG = MainActivity.class.getName();
 
-    static {
-        System.loadLibrary("actassistant");
-    }
-
+    //////////////////////
+    //全局变量相关
+    private boolean _isStartACTFloatingWindowServiceButtonPressed = false;
     public static final String CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE = "github.kutouzi.actassistant.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE";
 
-    private static final String _TAG = MainActivity.class.getName();
+    //////////////////////////////////
+
+
+    //////////////////////
+    //组件相关
     private ActivityMainBinding _binding;
+    private FloatingActionButton _startACTFloatingWindowServiceButton;
 
-    // 除服务开关外，其他所有按钮的状态，false表示全部禁用
-    private boolean _allButtonInWindowStartedState = true;
+    //////////////////////////////////
 
-    private ImageButton _settingButton;
-    private ImageButton _addClientButton;
-    private ImageButton _startACTFloatingWindowServiceButton;
-    private RecyclerView _clientRecyclerView;
-    private ScrollView _optionView;
 
-    private final int _recyclerViewSpanCount = 3;
-    private boolean _isStartACTFloatingWindowServiceButtonPressed = false;
-    public static String listName = "";
+    //////////////////////
+    //Fragment相关
+    private OptionFragment _optionFragment = null;
+    private CilentListviewFragment _cilentListviewFragment = null;
+    private UploadIpaddressFragment _uploadIpaddressFragment = null;
 
+    //////////////////////////////////
+
+
+    //////////////////////
+    //悬浮窗相关
+    private static WindowManager windowManager;
+    public static View windowView;
+    private static boolean _isViewAdded = false;
+
+    //////////////////////////////////
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         _binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(_binding.getRoot());
 
-        createClientView();
-
-        createSettingSwitch();
-        createAddClientSwitch();
-        createStartFloatingServiceWindowSwitch();
-        createOptionView();
-
-    }
-
-    private void createClientView(){
-        // 寻找clientRecyclerView的xml资源
-        _clientRecyclerView = findViewById(R.id.clientView);
-
-        // 设置布局管理器
-        GridLayoutManager layoutManager = new GridLayoutManager(this, _recyclerViewSpanCount, GridLayoutManager.VERTICAL, false);
-        _clientRecyclerView.setLayoutManager(layoutManager);
-
-        // 创建数据集
-        List<ClientViewData> clientViewData = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            clientViewData.add(new ClientViewData("192.168.1." + i, R.drawable.connection_lost));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
         }
+        createNavigationRailView();
+        createStartFloatingServiceWindowSwitch();
+    }
+    private void createNavigationRailView(){
+        NavigationRailView navigationRailView = findViewById(R.id.navigationRail);
+        navigationRailView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.menuList) {
+                if (_cilentListviewFragment == null){
+                    _cilentListviewFragment = new CilentListviewFragment();
+                    Bundle b = new Bundle();
+                    b.putInt("layoutResId", R.layout.fragment_cilent_listview);
+                    _cilentListviewFragment.setArguments(b);
+                    getSupportFragmentManager().beginTransaction().add(R.id.fragmentSlot, _cilentListviewFragment).hide(_cilentListviewFragment).commit();
+                }
+                FragmentUtil.switchFragment(getSupportFragmentManager(),_cilentListviewFragment);
+            }else if(itemId == R.id.menuOption) {
+                if (_optionFragment == null){
+                    _optionFragment = new OptionFragment();
+                    Bundle b = new Bundle();
+                    b.putInt("layoutResId", R.layout.fragment_option);
+                    _optionFragment.setArguments(b);
+                    getSupportFragmentManager().beginTransaction().add(R.id.fragmentSlot, _optionFragment).hide(_optionFragment).commit();
+                }
+                FragmentUtil.switchFragment(getSupportFragmentManager(),_optionFragment);
+            }else if (itemId == R.id.menuUpload) {
+                if (_uploadIpaddressFragment == null){
+                    _uploadIpaddressFragment = new UploadIpaddressFragment();
+                    Bundle b = new Bundle();
+                    b.putInt("layoutResId", R.layout.fragment_upload_ipaddress);
+                    _uploadIpaddressFragment.setArguments(b);
+                    getSupportFragmentManager().beginTransaction().add(R.id.fragmentSlot, _uploadIpaddressFragment).hide(_uploadIpaddressFragment).commit();
+                }
+                FragmentUtil.switchFragment(getSupportFragmentManager(),_uploadIpaddressFragment);
+            }else if(itemId == R.id.menuHelp){
 
-        // 创建adapter，准备为视图提供数据
-        ClientViewAdapter adapter = new ClientViewAdapter(clientViewData);
-
-        // 通过adapter把数据集绑定到clientRecyclerView以显示
-        _clientRecyclerView.setAdapter(adapter);
+            }
+            return true;
+        });
+        MenuItem item = navigationRailView.getMenu().findItem(R.id.menuList);
+        navigationRailView.getMenu().performIdentifierAction(item.getItemId(), 0);
     }
 
     private void createStartFloatingServiceWindowSwitch(){
@@ -137,199 +149,16 @@ public class MainActivity extends AppCompatActivity  {
                         // 向服务请求销毁悬浮窗
                         _isStartACTFloatingWindowServiceButtonPressed = false;
                     } else {
+                        createFloatingWindow();
                         // 向服务请求开启悬浮窗
-                        startService(new Intent(this, ACTFloatingWindowService.class));
+                        startService(new Intent(getApplicationContext(), ACTFloatingWindowService.class));
                         requestCreateACTFloatingWindow();
-                        // 隐藏此activity
                         moveTaskToBack(true);
                         _isStartACTFloatingWindowServiceButtonPressed = true;
                     }
-                    switchOtherButtonStates();
                 }
             }
         });
-    }
-
-    private void switchOtherButtonStates(){
-        if(!_allButtonInWindowStartedState){
-            _settingButton.setEnabled(true);
-            _addClientButton.setEnabled(true);
-            DrawableUtil.setDrawableBackground(this,_settingButton,1,R.color.button_color);
-            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.button_color);
-            _allButtonInWindowStartedState = true;
-            Log.i(_TAG,"主菜单其他按钮已启用");
-        }else {
-            _settingButton.setEnabled(false);
-            _addClientButton.setEnabled(false);
-            DrawableUtil.setDrawableBackground(this,_settingButton,1,R.color.disable_button_color);
-            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.disable_button_color);
-            _allButtonInWindowStartedState = false;
-            Log.i(_TAG,"主菜单其他按钮已禁用");
-        }
-
-    }
-
-    private void switchOthersButtonStates(){
-        if(!_allButtonInWindowStartedState){
-            _startACTFloatingWindowServiceButton.setEnabled(true);
-            _addClientButton.setEnabled(true);
-            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.button_color);
-            DrawableUtil.setDrawableBackground(this,_startACTFloatingWindowServiceButton,1,R.color.button_color);
-            _allButtonInWindowStartedState = true;
-            Log.i(_TAG,"主菜单其他按钮已启用");
-        }else {
-            _startACTFloatingWindowServiceButton.setEnabled(false);
-            _addClientButton.setEnabled(false);
-            DrawableUtil.setDrawableBackground(this,_addClientButton,1,R.color.disable_button_color);
-            DrawableUtil.setDrawableBackground(this,_startACTFloatingWindowServiceButton,1,R.color.disable_button_color);
-            _allButtonInWindowStartedState = false;
-            Log.i(_TAG,"主菜单其他按钮已禁用");
-        }
-
-    }
-
-    private void createSettingSwitch(){
-        _settingButton = findViewById(R.id.settingButton);
-        _settingButton.setOnClickListener(v->{
-            if(_optionView.getVisibility() == View.GONE){
-                _optionView.setVisibility(View.VISIBLE);
-                switchOthersButtonStates();
-            }
-            else {
-                _optionView.setVisibility(View.GONE);
-                switchOthersButtonStates();
-            }
-        });
-    }
-
-    private void createOptionView(){
-        _optionView = findViewById(R.id.optionLayout);
-        EditText maxSwipeupTimeEditText = findViewById(R.id.maxSwipeupTimeEditText);
-        EditText minSwipeupTimeEditText = findViewById(R.id.minSwipeupTimeEditText);
-        EditText maxDelayTimeEditText = findViewById(R.id.maxDelayTimeEditText);
-        EditText minDelayTimeEditText = findViewById(R.id.minDelayTimeEditText);
-        SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME);
-        Optional.ofNullable(swipeUpData).ifPresent(s -> {
-            maxSwipeupTimeEditText.setText(String.valueOf(s.getRandomMaxSwipeupValue()));
-            minSwipeupTimeEditText.setText(String.valueOf(s.getRandomMinSwipeupValue()));
-            maxDelayTimeEditText.setText(String.valueOf(s.getRandomMaxDelayValue()));
-            minDelayTimeEditText.setText(String.valueOf(s.getRandomMinDelayValue()));
-        });
-        maxSwipeupTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
-            if(!hasFocus){
-                Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    if(Integer.parseInt(maxSwipeupTimeEditText.getText().toString()) >= s.getRandomMinSwipeupValue()){
-                        // 检测是否大于等于当前最小值
-                        s.setRandomMaxSwipeupValue(Integer.parseInt(maxSwipeupTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME,s);
-                    }else {
-                        // 小于的话就设置回去
-                        s.setRandomMaxSwipeupValue(s.getRandomMaxSwipeupValue());
-                        GT.toast_time("写入失败：错误的值",3000);
-                    }
-                });
-            }
-        });
-        minSwipeupTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
-            if(!hasFocus){
-                Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    if(Integer.parseInt(minSwipeupTimeEditText.getText().toString()) <= s.getRandomMaxSwipeupValue()){
-                        s.setRandomMinSwipeupValue(Integer.parseInt(minSwipeupTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(this,JsonFileDefinition.SWIPEUP_JSON_NAME,s);
-                    }else {
-                        s.setRandomMinSwipeupValue(s.getRandomMinSwipeupValue());
-                        GT.toast_time("写入失败：错误的值",3000);
-                    }
-                });
-            }
-        });
-        maxDelayTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
-            if(!hasFocus){
-                Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    if(Integer.parseInt(maxDelayTimeEditText.getText().toString()) >= s.getRandomMinDelayValue()) {
-                        s.setRandomMaxDelayValue(Integer.parseInt(maxDelayTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(this, JsonFileDefinition.SWIPEUP_JSON_NAME, s);
-                    }else {
-                        s.setRandomMaxDelayValue(s.getRandomMaxDelayValue());
-                        GT.toast_time("写入失败：错误的值",3000);
-                    }
-                });
-            }
-        });
-        minDelayTimeEditText.setOnFocusChangeListener((v,hasFocus)->{
-            if(!hasFocus){
-                Optional.ofNullable(swipeUpData).ifPresent(s->{
-                    if(Integer.parseInt(minDelayTimeEditText.getText().toString()) <= s.getRandomMaxDelayValue()) {
-                        s.setRandomMinDelayValue(Integer.parseInt(minDelayTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(this, JsonFileDefinition.SWIPEUP_JSON_NAME, s);
-                    }else {
-                        s.setRandomMinDelayValue(s.getRandomMinDelayValue());
-                        GT.toast_time("写入失败：错误的值",3000);
-                    }
-                });
-            }
-        });
-
-        //KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(this,JsonFileDefinition.KEYWORD_JSON_NAME);
-        Spinner keyWordJsonSpinner = findViewById(R.id.keyWordJsonSpinner);
-        SpinnerAdapter spinnerAdapter = new KeyWordJsonSpinnerAdapter(this, Stream.of(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST,
-                KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST,KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST).collect(Collectors.toList()));
-        keyWordJsonSpinner.setAdapter(spinnerAdapter);
-        keyWordJsonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                listName = (String) parent.getItemAtPosition(position);
-                // TODO：bug Json可能有列表被清空的情况
-                if (listName.equals(KeyWordListDefinition.PINGDUODUO_CLICKABLE_KEYWORD_LIST)) {
-                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoClickableKeyWordList());
-                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
-                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-                    createAddKeyWordItem(keyWordViewAdapter);
-                }else if(listName.equals(KeyWordListDefinition.PINGDUODUO_CANCELABLE_KEYWORD_LIST)){
-                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
-                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
-                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-                    createAddKeyWordItem(keyWordViewAdapter);
-                }else if(listName.equals(KeyWordListDefinition.MEITUAN_CLICKABLE_KEYWORD_LIST)){
-                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanClickableKeyWordList());
-                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
-                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-                    createAddKeyWordItem(keyWordViewAdapter);
-                }else if(listName.equals(KeyWordListDefinition.MEITUAN_CANCELABLE_KEYWORD_LIST)){
-                    RecyclerView keyWordRecyclerView = findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
-                    keyWordRecyclerView.setAdapter(keyWordViewAdapter);
-                    keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-                    createAddKeyWordItem(keyWordViewAdapter);
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        _optionView.setVisibility(View.GONE);
-
-    }
-    private void createAddKeyWordItem(KeyWordViewAdapter keyWordViewAdapter){
-        ImageButton addKeyWordButton = findViewById(R.id.addKeyWordButton);
-        EditText addKeyWordEditText = findViewById(R.id.addKeyWordEditText);
-        addKeyWordButton.setOnClickListener(v -> {
-            String s = addKeyWordEditText.getText().toString();
-            if (!s.isEmpty()){
-                keyWordViewAdapter.addItem(s,v);
-            }else {
-                GT.toast_time("未输入任何东西",3000);
-            }
-        });
-    }
-
-    private void createAddClientSwitch(){
-        _addClientButton = findViewById(R.id.addClientButton);
     }
     private void requestCreateACTFloatingWindow() {
         sendBroadcast(new Intent(CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE).putExtra("key","Create"));
@@ -343,5 +172,52 @@ public class MainActivity extends AppCompatActivity  {
         }
         return false;
     }
+    private void createFloatingWindow(){
+        //创建悬浮窗
+        if(windowManager == null) {
+            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        }
 
+        Display display = windowManager.getDefaultDisplay();
+        display.getSize(new Point());
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        windowView = inflater.inflate(R.layout.window_view, null);
+
+        if (windowView != null) {
+            windowManager.addView(windowView, getLayoutParams());
+            _isViewAdded = true;
+        }
+    }
+    @NonNull
+    private static WindowManager.LayoutParams getLayoutParams() {
+        WindowManager.LayoutParams _layoutParams;
+        // 设置悬浮窗参数
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            _layoutParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+        }else {
+            _layoutParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+        }
+        _layoutParams.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+        return _layoutParams;
+    }
+    public static void removeFloatingWindow(){
+        if (windowView != null) {
+            windowManager.removeView(windowView);
+            _isViewAdded = false;
+            Log.i(_TAG, "悬浮窗被移除");
+        }
+    }
 }

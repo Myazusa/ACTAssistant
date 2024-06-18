@@ -7,242 +7,35 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/clientView"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ScrollView
-        android:id="@+id/optionLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="70dp"
-        android:background="@drawable/option_rounded_border"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <LinearLayout
-                android:id="@+id/maxSwipeupTime"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="上划最大时间间隔"
-                    android:textAlignment="center"
-                    android:textColor="#000000"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/maxSwipeupTimeEditText"
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="0"
-                    android:inputType="number"
-                    android:lines="1"
-                    android:maxLength="5"
-                    android:textAlignment="center" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/minSwipeupTime"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="上划最小时间间隔"
-                    android:textAlignment="center"
-                    android:textColor="#000000" />
-
-                <EditText
-                    android:id="@+id/minSwipeupTimeEditText"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="0"
-                    android:inputType="number"
-                    android:lines="1"
-                    android:maxLength="5"
-                    android:textAlignment="center" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/maxDelayTime"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="上划最大时间"
-                    android:textAlignment="center"
-                    android:textColor="#000000" />
-
-                <EditText
-                    android:id="@+id/maxDelayTimeEditText"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="0"
-                    android:inputType="number"
-                    android:lines="1"
-                    android:maxLength="3"
-                    android:textAlignment="center" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/minDelayTime"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="上划最小时间"
-                    android:textAlignment="center"
-                    android:textColor="#000000" />
-
-                <EditText
-                    android:id="@+id/minDelayTimeEditText"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="0"
-                    android:inputType="number"
-                    android:lines="1"
-                    android:maxLength="3"
-                    android:textAlignment="center" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/KeyWordLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <Spinner
-                    android:id="@+id/keyWordJsonSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/keyWordRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="381dp"
-                    android:layout_weight="1"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/addKeyWordEditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:gravity="start|top"
-                        android:inputType="textMultiLine" />
-
-                    <ImageButton
-                        android:id="@+id/addKeyWordButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="#00FFFFFF"
-                        app:srcCompat="@android:drawable/ic_menu_add" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/menuLayout"
+    <com.google.android.material.navigationrail.NavigationRailView
+        android:id="@+id/navigationRail"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:background="@color/button_background_color"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        app:headerLayout="@layout/icon_view"
+        app:menu="@menu/navigation_rail_menu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:itemActiveIndicatorStyle="@style/CustomActiveIndicator"
+        app:labelVisibilityMode="auto"
+        app:menuGravity="center" />
 
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentSlot"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toEndOf="@+id/navigationRail"
+        tools:layout_editor_absoluteY="0dp" />
 
-        <ImageButton
-            android:id="@+id/addClientButton"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/main_button_rounded_border"
-            android:contentDescription="@string/addConnectButtonDescription"
-            app:srcCompat="@android:drawable/ic_menu_add" />
-
-        <ImageButton
-            android:id="@+id/serviceWindowButton"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/main_button_rounded_border"
-            android:contentDescription="@string/startACTButtonDescription"
-            android:padding="@dimen/cardview_default_radius"
-            app:srcCompat="@android:drawable/ic_lock_power_off" />
-
-        <ImageButton
-            android:id="@+id/settingButton"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/main_button_rounded_border"
-            android:contentDescription="@string/settingButtonDescription"
-            android:padding="@dimen/cardview_default_radius"
-            app:srcCompat="@android:drawable/ic_menu_preferences" />
-
-    </LinearLayout>
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/serviceWindowButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:layout_margin="10dp"
+        android:src="@drawable/button_power_1__streamline_core"
+        app:backgroundTint="@color/my_app_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

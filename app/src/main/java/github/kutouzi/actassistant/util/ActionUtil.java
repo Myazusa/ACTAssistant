@@ -1,16 +1,17 @@
 package github.kutouzi.actassistant.util;
 
+import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Path;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.view.accessibility.AccessibilityNodeInfo;
+
+import java.util.List;
 
 import github.kutouzi.actassistant.entity.SwipeUpData;
-import github.kutouzi.actassistant.enums.JsonFileDefinition;
-import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.ACTFloatingWindowService;
 
 public class ActionUtil {
@@ -33,7 +34,7 @@ public class ActionUtil {
             path.lineTo(endX, endY);
 
             GestureDescription.StrokeDescription stroke = new GestureDescription.StrokeDescription(
-                    path, 0, RandomtTimeUtil.getRandomDelayTillis(swipeUpData.getRandomMinDelayValue(),swipeUpData.getRandomMaxDelayValue()));
+                    path, 0, RandomUtil.getRandomDelayTillis(swipeUpData.getRandomMinDelayValue(),swipeUpData.getRandomMaxDelayValue()));
 
             GestureDescription gesture = new GestureDescription.Builder()
                     .addStroke(stroke)
@@ -57,11 +58,59 @@ public class ActionUtil {
         }
         pendingAction = () -> {
             ActionUtil.performSwipeUp(resources,swipeUpData,actFloatingWindowService);
-            handler.postDelayed(pendingAction, RandomtTimeUtil.getRandomDelayTillis(swipeUpData.getRandomMinSwipeupValue(),swipeUpData.getRandomMaxSwipeupValue()));
+            handler.postDelayed(pendingAction, RandomUtil.getRandomDelayTillis(swipeUpData.getRandomMinSwipeupValue(),swipeUpData.getRandomMaxSwipeupValue()));
         };
         handler.post(pendingAction);
     }
     public static void removeSwipeAction(){
         handler.removeCallbacks(pendingAction);
+    }
+
+    public static boolean clickAction(AccessibilityNodeInfo nodeInfo, String text) {
+        if(nodeInfo.findAccessibilityNodeInfosByText(text) != null){
+            List<AccessibilityNodeInfo> nodeInfos = nodeInfo.findAccessibilityNodeInfosByText(text);
+            for (AccessibilityNodeInfo info:
+                    nodeInfos) {
+                Log.i(_TAG,"找到'"+ text + "'节点");
+                AccessibilityNodeInfo i = TraverseNodeUtil.traverseParent(info);
+                if(i != null){
+                    i.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+    public static boolean findClickAction(AccessibilityNodeInfo nodeInfo, String infoText,String targetText){
+        if(nodeInfo.findAccessibilityNodeInfosByText(infoText) != null){
+            List<AccessibilityNodeInfo> nodeInfos = nodeInfo.findAccessibilityNodeInfosByText(infoText);
+            for (AccessibilityNodeInfo info:
+                    nodeInfos) {
+                AccessibilityNodeInfo unClickableParent = TraverseNodeUtil.traverseUnClickableParent(info);
+                if(unClickableParent !=null){
+                    if(unClickableParent.findAccessibilityNodeInfosByText(targetText) != null){
+                        List<AccessibilityNodeInfo> infos = unClickableParent.findAccessibilityNodeInfosByText(targetText);
+                        for (AccessibilityNodeInfo i:
+                                infos) {
+                            AccessibilityNodeInfo clickableParent = TraverseNodeUtil.traverseParent(i);
+                            if(clickableParent !=null){
+                                clickableParent.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                return true;
+                            }
+                        }
+                    };
+
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+    public static void returnAction(AccessibilityService accessibilityService,int layers){
+        while (layers>0){
+            accessibilityService.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
+            layers--;
+        }
     }
 }

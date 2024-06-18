@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragmentOptionSwipeup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/maxSwipeupTime"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="上划最大时间间隔"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary"
+                    android:textSize="14sp" />
+
+
+                <EditText
+                    android:id="@+id/maxSwipeupTimeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="0"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="5"
+                    android:textAlignment="center" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/danwei1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/minSwipeupTime"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="上划最小时间间隔"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary" />
+
+                <EditText
+                    android:id="@+id/minSwipeupTimeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="0"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="5"
+                    android:textAlignment="center" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/danwei2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/maxDelayTime"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="上划最大时间"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary" />
+
+                <EditText
+                    android:id="@+id/maxDelayTimeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="0"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="3"
+                    android:textAlignment="center" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/danwei3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/minDelayTime"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="上划最小时间"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary" />
+
+                <EditText
+                    android:id="@+id/minDelayTimeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="0"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="3"
+                    android:textAlignment="center" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/danwei4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="毫秒"
+                    android:textAlignment="center"
+                    android:textColor="@color/my_app_on_primary"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

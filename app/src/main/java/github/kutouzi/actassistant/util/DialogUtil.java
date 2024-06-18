@@ -10,22 +10,21 @@ import github.kutouzi.actassistant.service.ACTFloatingWindowService;
 
 public class DialogUtil {
     private static final String _TAG = DialogUtil.class.getName();
-    public static void clickDialog(AccessibilityNodeInfo nodeInfo, ACTFloatingWindowService actFloatingWindowService, List<String> keyWordList) {
-        for (String s: keyWordList) {
-            if(nodeInfo.findAccessibilityNodeInfosByText(s) != null){
-                List<AccessibilityNodeInfo> jiangliList = nodeInfo.findAccessibilityNodeInfosByText(s);
-                for (AccessibilityNodeInfo info:
-                        jiangliList) {
-                    Log.i(_TAG,"发现'"+ s + "'节点");
-                    actFloatingWindowService.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
-                    AccessibilityNodeInfo i = TraverseNodeUtil.traverseParent(info);
-                    if(i != null){
-                        i.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    }
-                }
-            }
-        }
-    }
+//    public static void clickDialog(AccessibilityNodeInfo nodeInfo, List<String> keyWordList) {
+//        for (String s: keyWordList) {
+//            if(nodeInfo.findAccessibilityNodeInfosByText(s) != null){
+//                List<AccessibilityNodeInfo> nodeInfos = nodeInfo.findAccessibilityNodeInfosByText(s);
+//                for (AccessibilityNodeInfo info:
+//                        nodeInfos) {
+//                    Log.i(_TAG,"发现'"+ s + "'节点");
+//                    AccessibilityNodeInfo i = TraverseNodeUtil.traverseParent(info);
+//                    if(i != null){
+//                        i.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     public static void cancelDialog(AccessibilityNodeInfo nodeInfo,ACTFloatingWindowService actFloatingWindowService,List<String> keyWordList){
         for (String s:keyWordList) {

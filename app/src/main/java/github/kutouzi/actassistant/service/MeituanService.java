@@ -50,12 +50,12 @@ public class MeituanService extends ApplicationService{
     }
     public void autoCheckInTask(AccessibilityNodeInfo nodeInfo, AccessibilityService accessibilityService) throws FailedTaskException {
         int layers = 0;
-        if(!ActionUtil.clickAction(nodeInfo.getWindow().getRoot(),"去提现")){
+        if(!ActionUtil.clickAction(nodeInfo,"去提现")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能打开任务页");
         }
         layers++;
-        if(!ActionUtil.clickAction(nodeInfo.getWindow().getRoot(),"去打卡")){
+        if(!ActionUtil.clickAction(nodeInfo,"去打卡")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能点击到打卡");
         }

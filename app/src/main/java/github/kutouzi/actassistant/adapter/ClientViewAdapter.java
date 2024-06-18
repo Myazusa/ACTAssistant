@@ -3,11 +3,12 @@ package github.kutouzi.actassistant.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
 
@@ -46,8 +47,8 @@ public class ClientViewAdapter extends RecyclerView.Adapter<ClientViewAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView clientInfo;
-        ImageView clientPreview;
+        MaterialTextView clientInfo;
+        ShapeableImageView clientPreview;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

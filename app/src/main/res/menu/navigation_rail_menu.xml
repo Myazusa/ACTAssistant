@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuList"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_dialer"
+        android:title="列表" />
+    <item
+        android:id="@+id/menuOption"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="设置"/>
+    <item
+        android:id="@+id/menuUpload"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_upload"
+        android:title="上传"/>
+    <item
+        android:id="@+id/menuHelp"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="帮助"/>
+</menu>

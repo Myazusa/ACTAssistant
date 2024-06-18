@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <github.kutouzi.actassistant.view.ToggleButtonLayout
+        <github.kutouzi.actassistant.view.button.ToggleButton
             android:id="@+id/startApplicationButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -33,9 +33,9 @@
                 android:contentDescription="开启应用"
                 android:src="@android:drawable/ic_menu_send" />
 
-        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+        </github.kutouzi.actassistant.view.button.ToggleButton>
 
-        <github.kutouzi.actassistant.view.ToggleButtonLayout
+        <github.kutouzi.actassistant.view.button.ToggleButton
             android:id="@+id/scanApplicationButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -52,9 +52,9 @@
                 android:contentDescription="扫描应用"
                 android:src="@android:drawable/ic_menu_search" />
 
-        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+        </github.kutouzi.actassistant.view.button.ToggleButton>
 
-        <github.kutouzi.actassistant.view.ToggleButtonLayout
+        <github.kutouzi.actassistant.view.button.ToggleButton
             android:id="@+id/listeningDialogButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -71,10 +71,10 @@
                 android:contentDescription="监听弹窗"
                 android:src="@android:drawable/ic_menu_mylocation" />
 
-        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+        </github.kutouzi.actassistant.view.button.ToggleButton>
 
 
-        <github.kutouzi.actassistant.view.ToggleButtonLayout
+        <github.kutouzi.actassistant.view.button.ToggleButton
             android:id="@+id/swipeUpButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -91,9 +91,9 @@
                 android:contentDescription="上划"
                 android:src="@android:drawable/ic_media_play" />
 
-        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+        </github.kutouzi.actassistant.view.button.ToggleButton>
 
-        <github.kutouzi.actassistant.view.ToggleButtonLayout
+        <github.kutouzi.actassistant.view.button.ToggleButton
             android:id="@+id/returnMainActivityButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -110,7 +110,7 @@
                 android:contentDescription="返回"
                 android:src="@android:drawable/ic_menu_close_clear_cancel" />
 
-        </github.kutouzi.actassistant.view.ToggleButtonLayout>
+        </github.kutouzi.actassistant.view.button.ToggleButton>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

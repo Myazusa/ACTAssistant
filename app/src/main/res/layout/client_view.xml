@@ -2,45 +2,42 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/clientView"
+    android:id="@+id/listView"
+    android:background="@color/my_app_primary"
     android:padding="3dp"
     android:layout_width="120dp"
     android:layout_height="220dp">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/clientLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/clientInfo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/clientPreview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/clinet_rounded_border"
+            android:layout_weight="4"
             android:padding="1dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <View
-            android:id="@+id/clientBorder"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/clientInfo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/clinet_rounded_border" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ClientInfo"
+            android:textColor="@color/my_app_on_primary"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </FrameLayout>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/clientInfo"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="ClientInfo"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

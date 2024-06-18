@@ -19,7 +19,7 @@ import github.kutouzi.actassistant.service.XiaohongshuService;
 
 public class PackageCheckUtil {
     private static final String _TAG = PackageCheckUtil.class.getName();
-    private static final List<String> defualtPackageList = Stream.of(BaidujisuService.PACKAGE_NAME,
+    private static final List<String> defualtPackageList = Stream.of(
             DouyinjisuService.PACKAGE_NAME,
             KuaishoujisuService.PACKAGE_NAME,
             MeituanService.PACKAGE_NAME,

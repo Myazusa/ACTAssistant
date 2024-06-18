@@ -34,12 +34,12 @@ public class DouyinjisuService extends ApplicationService{
     }
     public void autoCheckInTask(AccessibilityNodeInfo nodeInfo, AccessibilityService accessibilityService) throws FailedTaskException {
         int layers = 0;
-        if(!ActionUtil.clickAction(nodeInfo.getWindow().getRoot(),"赚钱")){
+        if(!ActionUtil.clickAction(nodeInfo,"赚钱")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能打开任务页");
         }
         layers++;
-        if(!ActionUtil.findClickAction(nodeInfo.getWindow().getRoot(),"签到领奖励","立即签到")){
+        if(!ActionUtil.findClickAction(nodeInfo,"签到领奖励","立即签到")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能点击到签到");
         }

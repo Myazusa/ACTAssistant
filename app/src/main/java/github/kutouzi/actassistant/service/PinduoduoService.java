@@ -48,17 +48,17 @@ public class PinduoduoService extends ApplicationService{
     }
     public void autoHeshuiTask(AccessibilityNodeInfo nodeInfo, AccessibilityService accessibilityService) throws FailedTaskException{
         int layers = 0;
-        if(!ActionUtil.clickAction(nodeInfo.getWindow().getRoot(),"去提现")){
+        if(!ActionUtil.clickAction(nodeInfo,"去提现")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能打开任务页");
         }
         layers++;
-        if(!ActionUtil.findClickAction(nodeInfo.getWindow().getRoot(),"每日8次喝水赚钱","去领取")){
+        if(!ActionUtil.findClickAction(nodeInfo,"每日8次喝水赚钱","去领取")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能喝水打卡");
         }
         layers++;
-        if(!ActionUtil.clickAction(nodeInfo.getWindow().getRoot(),"喝水赚现金")){
+        if(!ActionUtil.clickAction(nodeInfo,"喝水赚现金")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能领取金币");
         }

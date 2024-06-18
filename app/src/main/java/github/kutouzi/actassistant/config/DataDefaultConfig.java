@@ -26,5 +26,5 @@ public class DataDefaultConfig {
     public static final String defaultLocalServerPort = "48802";
 
     // 控制切换应用的时间间隔
-    public static final int defaultSwitchApplicationTime = 6000000;
+    public static final int defaultSwitchApplicationTime = 600000;
 }

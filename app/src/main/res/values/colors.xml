@@ -8,6 +8,40 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="my_app_primary">#70D1C4E9</color>
+    <color name="my_app_primary_dark">#E1BEE7</color>
+    <color name="my_app_secondary">#BA68C8</color>
+    <color name="my_app_background">#FFEBEE</color>
+    <color name="my_app_error">#F06292</color>
+    <color name="my_app_accent">#EF9A9A</color>
+    <color name="my_app_primary_variant">#000000</color>
+    <color name="my_app_secondary_variant">#000000</color>
+    <color name="my_app_surface">#E1BEE7</color>
+    <color name="my_app_on_primary">#CE93D8</color>
+    <color name="my_app_on_secondary">#000000</color>
+    <color name="my_app_on_background">#000000</color>
+    <color name="my_app_on_error">#F48FB1</color>
+    <color name="my_app_on_surface">#000000</color>
+    <color name="mtrl_scrim">#000000</color>
+    <color name="my_app_primary_inverse">#000000</color>
+    <color name="my_app_primary_container">#B39DDB</color>
+    <color name="my_app_on_primary_container">#F3E5F5</color>
+    <color name="my_app_secondary_container">#F3E5F5</color>
+    <color name="my_app_tertiary">#F3E5F5</color>
+    <color name="my_app_on_tertiary">#F3E5F5</color>
+    <color name="my_app_tertiary_container">#F3E5F5</color>
+    <color name="my_app_on_tertiary_container">#F3E5F5</color>
+    <color name="my_app_surface_variant">#F3E5F5</color>
+    <color name="my_app_on_surface_variant">#F3E5F5</color>
+    <color name="my_app_inverse_surface">#F3E5F5</color>
+    <color name="my_app_inverse_on_surface">#F3E5F5</color>
+    <color name="my_app_on_secondary_container">#F3E5F5</color>
+    <color name="my_app_outline">#F3E5F5</color>
+    <color name="my_app_error_container">#F3E5F5</color>
+    <color name="my_app_on_error_container">#F3E5F5</color>
+
+
+
     <color name="button_color">#C9FFFFFF</color>
     <color name="button_rounded_color">#C9FFFF66</color>
     <color name="pressed_button_color">#C9FFA9A9</color>

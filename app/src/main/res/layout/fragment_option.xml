@@ -28,34 +28,38 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/swipeUpSettingButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="上划设置"
-                app:icon="@android:drawable/ic_menu_preferences" />
+                app:iconGravity="top"
+                android:text="上划时间设置"
+                app:icon="@drawable/circle_clock__streamline_core" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/switchApplicationSettingButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/switchApplicationSettingButton"
                 android:layout_weight="1"
+                app:iconGravity="top"
                 android:text="切换应用设置"
-                app:icon="@android:drawable/ic_menu_preferences" />
+                app:icon="@drawable/align_front_1__streamline_core" />
         </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="10dp">
+
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/autoSettingButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/autoSettingButton"
                     android:layout_weight="1"
                     android:text="自动化设置开关"
-                    app:icon="@android:drawable/ic_menu_preferences" />
+                    app:icon="@drawable/vertical_slider_square__streamline_core" />
             </LinearLayout>
 
         <LinearLayout
@@ -63,13 +67,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp">
+
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/keyWordButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/keyWordButton"
                 android:layout_weight="1"
                 android:text="关键词搜索列表设置"
-                app:icon="@android:drawable/ic_menu_preferences" />
+                app:icon="@drawable/definition_search_book__streamline_core" />
         </LinearLayout>
 
 

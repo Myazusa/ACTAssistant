@@ -28,6 +28,7 @@
         tools:targetApi="29">
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.ACTAssistant"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +37,7 @@
         </activity>
         <service android:name=".service.ACTFloatingWindowService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:theme="@style/Theme.ACTAssistant"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />

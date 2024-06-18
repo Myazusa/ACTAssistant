@@ -28,7 +28,7 @@
                 android:layout_gravity="center"
                 android:ems="60"
                 android:textColor="@color/my_app_on_primary"
-                android:text="输入发送到的服务器地址"
+                android:text="添加服务器地址"
                 android:textAlignment="center" />
 
             <LinearLayout
@@ -136,8 +136,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="发送"
-                app:icon="@android:drawable/ic_menu_send" />
+                android:text="添加"
+                app:icon="@drawable/check__streamline_core" />
 
         </LinearLayout>
     </ScrollView>

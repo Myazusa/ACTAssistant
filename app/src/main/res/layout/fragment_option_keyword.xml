@@ -84,12 +84,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/addKeyWordButton"
-                app:icon="@android:drawable/ic_menu_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_weight="1"
                 android:text="添加"
-                android:layout_weight="1" />
+                app:icon="@drawable/check__streamline_core" />
         </LinearLayout>
 
     </LinearLayout>

@@ -31,11 +31,11 @@
         android:id="@+id/serviceWindowButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
+        android:layout_gravity="start|bottom"
         android:layout_margin="10dp"
-        android:src="@android:drawable/ic_lock_power_off"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/button_power_1__streamline_core"
         app:backgroundTint="@color/my_app_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

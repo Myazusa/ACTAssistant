@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.button.MaterialButton;
 
 import github.kutouzi.actassistant.R;
+import github.kutouzi.actassistant.util.FragmentUtil;
 
 public class OptionFragment extends Fragment {
     private int _layoutResId;
@@ -35,62 +36,60 @@ public class OptionFragment extends Fragment {
         _swipeUpSettingButton = _layout.findViewById(R.id.swipeUpSettingButton);
         _swipeUpSettingButton.setOnClickListener(v -> {
             if(_optionSwipeupFragment == null){
-                if (savedInstanceState == null) {
-                    _optionSwipeupFragment = new OptionSwipeupFragment();
-                    Bundle b = new Bundle();
-                    b.putInt("layoutResId", R.layout.fragment_option_swipeup);
-                    _optionSwipeupFragment.setArguments(b);
-                }
-                getChildFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentSlot, _optionSwipeupFragment)
-                        .addToBackStack("OptionFragment")
+                _optionSwipeupFragment = new OptionSwipeupFragment();
+                Bundle b = new Bundle();
+                b.putInt("layoutResId", R.layout.fragment_option_swipeup);
+                _optionSwipeupFragment.setArguments(b);
+
+                getParentFragmentManager().beginTransaction()
+                        .add(R.id.fragmentSlot, _optionSwipeupFragment)
+                        .hide(_optionSwipeupFragment)
                         .commit();
             }
+            FragmentUtil.switchFragment(getParentFragmentManager(),_optionSwipeupFragment);
         });
         _switchApplicationSettingButton = _layout.findViewById(R.id.switchApplicationSettingButton);
         _switchApplicationSettingButton.setOnClickListener(v -> {
             if(_optionSwitchAppFragment == null){
-                if (savedInstanceState == null) {
-                    _optionSwitchAppFragment = new OptionSwitchAppFragment();
-                    Bundle b = new Bundle();
-                    b.putInt("layoutResId", R.layout.fragment_option_switchapp);
-                    _optionSwitchAppFragment.setArguments(b);
-                }
-                getChildFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentSlot, _optionSwitchAppFragment)
-                        .addToBackStack("OptionFragment")
+                _optionSwitchAppFragment = new OptionSwitchAppFragment();
+                Bundle b = new Bundle();
+                b.putInt("layoutResId", R.layout.fragment_option_switchapp);
+                _optionSwitchAppFragment.setArguments(b);
+
+                getParentFragmentManager().beginTransaction()
+                        .add(R.id.fragmentSlot, _optionSwitchAppFragment)
+                        .hide(_optionSwitchAppFragment)
                         .commit();
             }
+            FragmentUtil.switchFragment(getParentFragmentManager(),_optionSwitchAppFragment);
         });
         _autoSettingButton = _layout.findViewById(R.id.autoSettingButton);
         _autoSettingButton.setOnClickListener(v -> {
             if(_optionAutoSettingFragment == null){
-                if (savedInstanceState == null) {
-                    _optionAutoSettingFragment = new OptionAutoSettingFragment();
-                    Bundle b = new Bundle();
-                    b.putInt("layoutResId", R.layout.fragment_option_autosetting);
-                    _optionAutoSettingFragment.setArguments(b);
-                }
-                getChildFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentSlot, _optionAutoSettingFragment)
-                        .addToBackStack("OptionFragment")
+                _optionAutoSettingFragment = new OptionAutoSettingFragment();
+                Bundle b = new Bundle();
+                b.putInt("layoutResId", R.layout.fragment_option_autosetting);
+                _optionAutoSettingFragment.setArguments(b);
+                getParentFragmentManager().beginTransaction()
+                        .add(R.id.fragmentSlot, _optionAutoSettingFragment)
+                        .hide(_optionAutoSettingFragment)
                         .commit();
             }
+            FragmentUtil.switchFragment(getParentFragmentManager(),_optionAutoSettingFragment);
         });
         _keyWordButton = _layout.findViewById(R.id.keyWordButton);
         _keyWordButton.setOnClickListener(v -> {
             if(_optionKeywordFragment == null){
-                if (savedInstanceState == null) {
-                    _optionKeywordFragment = new OptionKeywordFragment();
-                    Bundle b = new Bundle();
-                    b.putInt("layoutResId", R.layout.fragment_option_keyword);
-                    _optionKeywordFragment.setArguments(b);
-                }
-                getChildFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentSlot, _optionKeywordFragment)
-                        .addToBackStack("OptionFragment")
+                _optionKeywordFragment = new OptionKeywordFragment();
+                Bundle b = new Bundle();
+                b.putInt("layoutResId", R.layout.fragment_option_keyword);
+                _optionKeywordFragment.setArguments(b);
+                getParentFragmentManager().beginTransaction()
+                        .add(R.id.fragmentSlot, _optionKeywordFragment)
+                        .hide(_optionKeywordFragment)
                         .commit();
             }
+            FragmentUtil.switchFragment(getParentFragmentManager(),_optionKeywordFragment);
         });
         return _layout;
     }

@@ -3,21 +3,21 @@
     <item
         android:id="@+id/menuList"
         android:enabled="true"
-        android:icon="@android:drawable/ic_dialog_dialer"
+        android:icon="@drawable/dashboard_circle__streamline_core"
         android:title="列表" />
-    <item
-        android:id="@+id/menuOption"
-        android:enabled="true"
-        android:icon="@android:drawable/ic_menu_preferences"
-        android:title="设置"/>
     <item
         android:id="@+id/menuUpload"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_upload"
-        android:title="上传"/>
+        android:icon="@drawable/database_server_1__streamline_core"
+        android:title="上传" />
+    <item
+        android:id="@+id/menuOption"
+        android:enabled="true"
+        android:icon="@drawable/cog__streamline_core"
+        android:title="设置" />
     <item
         android:id="@+id/menuHelp"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="帮助"/>
+        android:icon="@drawable/help_question_1__streamline_core"
+        android:title="帮助" />
 </menu>

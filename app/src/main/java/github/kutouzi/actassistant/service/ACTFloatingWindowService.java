@@ -1,32 +1,28 @@
 package github.kutouzi.actassistant.service;
 
 import static github.kutouzi.actassistant.MainActivity.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE;
+import static github.kutouzi.actassistant.MainActivity.windowView;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.gsls.gt.GT;
 
 import java.util.List;
 import java.util.Objects;
 
+import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
@@ -38,7 +34,6 @@ import github.kutouzi.actassistant.util.DialogUtil;
 import github.kutouzi.actassistant.util.DrawableUtil;
 import github.kutouzi.actassistant.util.PackageCheckUtil;
 import github.kutouzi.actassistant.util.RandomUtil;
-import github.kutouzi.actassistant.view.fragment.OptionAutoSettingFragment;
 import github.kutouzi.actassistant.view.button.ToggleButton;
 
 
@@ -47,8 +42,8 @@ public class ACTFloatingWindowService extends AccessibilityService {
 
     //////////////////////
     //悬浮窗窗体相关
-    private WindowManager _windowManager;
-    private View _windowView;
+    private FloatingActionButton _windowFloatButton;
+    LinearLayout _functionButtonLayout;
     //////////////////////////////////
 
 
@@ -66,7 +61,6 @@ public class ACTFloatingWindowService extends AccessibilityService {
     //////////////////////
     //全局标记相关
     private static int _scanApplicationFlag = 0;
-    private boolean _isViewAdded = false;
     private List<String> installedPackageList;
     private CountDownTimer countDownTimer = null;
     private static boolean _runTask = false;
@@ -83,29 +77,35 @@ public class ACTFloatingWindowService extends AccessibilityService {
         public void onReceive(Context context, Intent intent) {
             if (CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE.equals(intent.getAction())) {
                 if(Objects.equals(intent.getStringExtra("key"), "Create")){
-                    if(_windowManager != null){
-                        //如果这个窗口还存在，就是重复创建悬浮窗
-                        if(!_isViewAdded){
-                            _windowManager.addView(_windowView,getLayoutParams());
-                        }
-                    }else {
-                        // 先创建悬浮窗
-                        createFloatingWindow();
-                        // 再创建悬浮窗里的开关
-                        createListeningDialogSwitch();
-                        createStartApplicationSwitch();
-                        createReturnMainActivitySwitch();
-                        createSwipeUpSwitch();
+                    // 创建悬浮开关
+                    createFloatingButton();
+                    // 再创建悬浮窗里的开关
+                    createListeningDialogSwitch();
+                    createStartApplicationSwitch();
+                    createReturnMainActivitySwitch();
+                    createSwipeUpSwitch();
 
-                        createScanApplicationSwitch();
+                    createScanApplicationSwitch();
+                    Log.i(_TAG,"悬浮窗已创建");
 
-                        Log.i(_TAG,"悬浮窗已创建");
-                    }
                 }
             }
         }
     };
 
+    private void createFloatingButton() {
+        _windowFloatButton = windowView.findViewById(R.id.windowFloatButton);
+        _functionButtonLayout = windowView.findViewById(R.id.functionButtonLayout);
+        _functionButtonLayout.setVisibility(View.GONE);
+        _windowFloatButton.setOnClickListener(v -> {
+            if(_functionButtonLayout.getVisibility() == View.GONE){
+                _functionButtonLayout.setVisibility(View.VISIBLE);
+            }else {
+                _functionButtonLayout.setVisibility(View.GONE);
+            }
+        });
+
+    }
     @Override
     public void onCreate() {
         super.onCreate();
@@ -115,62 +115,11 @@ public class ACTFloatingWindowService extends AccessibilityService {
         }else {
             registerReceiver(broadcastReceiver, filter);
         }
+
     }
-
-    private void createFloatingWindow(){
-        //创建悬浮窗
-        if(_windowManager == null) {
-            _windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        }
-
-        Display display = _windowManager.getDefaultDisplay();
-        display.getSize(new Point());
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        _windowView = inflater.inflate(R.layout.window_view, null);
-
-        if (_windowView != null) {
-            _windowManager.addView(_windowView, getLayoutParams());
-            _isViewAdded = true;
-        }
-    }
-
-    @NonNull
-    private static WindowManager.LayoutParams getLayoutParams() {
-        WindowManager.LayoutParams _layoutParams;
-        // 设置悬浮窗参数
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            _layoutParams = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT
-            );
-        }else {
-            _layoutParams = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT
-            );
-        }
-        _layoutParams.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
-        return _layoutParams;
-    }
-
-    private void removeFloatingWindow(){
-        if (_windowView != null) {
-            _windowManager.removeView(_windowView);
-            _isViewAdded = false;
-            Log.i(_TAG, "悬浮窗被移除");
-        }
-    }
-
     private void createListeningDialogSwitch(){
         // 创建监听弹窗开关
-        _listeningDialogButton = _windowView.findViewById(R.id.listeningDialogButton);
+        _listeningDialogButton = windowView.findViewById(R.id.listeningDialogButton);
         _listeningDialogButton.setEnabled(true);
         // 根据按钮状态开启和禁用
         _listeningDialogButton.setOnClickListener(v->{
@@ -191,10 +140,9 @@ public class ACTFloatingWindowService extends AccessibilityService {
             }
         });
     }
-
     private void createStartApplicationSwitch(){
         // 创建开启应用开关
-        _startApplicationButton = _windowView.findViewById(R.id.startApplicationButton);
+        _startApplicationButton = windowView.findViewById(R.id.startApplicationButton);
         installedPackageList = PackageCheckUtil.getInstalledPackageList(this);
         _startApplicationButton.setOnClickListener(v->{
             try {
@@ -202,7 +150,8 @@ public class ACTFloatingWindowService extends AccessibilityService {
                     String startPackageName = RandomUtil.getRandomPackage(installedPackageList);
                     Log.i(_TAG, "将打开：" + startPackageName);
                     requestStartApplication(startPackageName);
-                    if(OptionAutoSettingFragment._autoScanApplicationButton.isToggled()) {
+                    //OptionAutoSettingFragment.autoScanApplicationSwitch.isChecked()
+                    if(true) {
                         startSwitchApplicationTimer();
                         Log.i(_TAG,"计时器已启用");
                     }
@@ -275,7 +224,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
         }
     }
     private void createScanApplicationSwitch(){
-        _scanApplicationButton = _windowView.findViewById(R.id.scanApplicationButton);
+        _scanApplicationButton = windowView.findViewById(R.id.scanApplicationButton);
         _scanApplicationButton.setOnClickListener(v -> {
             _scanApplicationFlag = PinduoduoService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
                     + MeituanService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
@@ -353,18 +302,15 @@ public class ACTFloatingWindowService extends AccessibilityService {
 
     private void createReturnMainActivitySwitch(){
         //创建返回开关
-        _returnMainActivityButton = _windowView.findViewById(R.id.returnMainActivityButton);
+        _returnMainActivityButton = windowView.findViewById(R.id.returnMainActivityButton);
         _returnMainActivityButton.setOnClickListener(v->{
-//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(intent);
             onInterrupt();
         });
     }
 
     private void createSwipeUpSwitch() {
         //创建上划开关
-        _swipeUpButton = _windowView.findViewById(R.id.swipeUpButton);
+        _swipeUpButton = windowView.findViewById(R.id.swipeUpButton);
         _swipeUpButton.setOnClickListener(v->{
             if(_swipeUpButton.isToggled()){
                 // 如果上划按钮被按过
@@ -441,7 +387,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if(_windowView != null){
+        if(windowView != null){
             if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED){
                 listeningDialogAccessibilityEvent(event);
             }
@@ -499,7 +445,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
 
     @Override
     public void onInterrupt() {
-        removeFloatingWindow();
+        MainActivity.removeFloatingWindow();
     }
 
     @Override

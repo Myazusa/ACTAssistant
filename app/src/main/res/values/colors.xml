@@ -26,7 +26,7 @@
     <color name="my_app_primary_inverse">#000000</color>
     <color name="my_app_primary_container">#B39DDB</color>
     <color name="my_app_on_primary_container">#F3E5F5</color>
-    <color name="my_app_secondary_container">#F3E5F5</color>
+    <color name="my_app_secondary_container">#E1BEE7</color>
     <color name="my_app_tertiary">#F3E5F5</color>
     <color name="my_app_on_tertiary">#F3E5F5</color>
     <color name="my_app_tertiary_container">#F3E5F5</color>

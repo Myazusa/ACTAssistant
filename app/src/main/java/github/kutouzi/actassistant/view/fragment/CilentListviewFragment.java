@@ -30,6 +30,12 @@ public class CilentListviewFragment extends Fragment {
             _layoutResId = getArguments().getInt("layoutResId");
         }
         _layout = inflater.inflate(_layoutResId, container, false);
+
+        return _layout;
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         if(_clientRecyclerView == null){
             // 寻找clientRecyclerView的xml资源
             _clientRecyclerView = _layout.findViewById(R.id.listView);
@@ -50,6 +56,5 @@ public class CilentListviewFragment extends Fragment {
             // 通过adapter把数据集绑定到clientRecyclerView以显示
             _clientRecyclerView.setAdapter(adapter);
         }
-        return inflater.inflate(_layoutResId, container, false);
     }
 }

@@ -25,6 +25,6 @@
         android:background="#006A6A6A"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+        app:srcCompat="@drawable/delete_1__streamline_core" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

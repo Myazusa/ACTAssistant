@@ -55,10 +55,8 @@ public class ToggleButton extends MaterialButton {
     }
     private void updateButton() {
         if (isToggled) {
-            setText("现已启用");
             setTextAppearance(R.style.Widget_ToggleButton_On);
         } else {
-            setText("现未启用");
             setTextAppearance(R.style.Widget_ToggleButton_Off);
         }
     }

@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 import github.kutouzi.actassistant.R;
 import github.kutouzi.actassistant.adapter.KeyWordJsonSpinnerAdapter;
 import github.kutouzi.actassistant.adapter.KeyWordViewAdapter;
+import github.kutouzi.actassistant.entity.KeyWordData;
+import github.kutouzi.actassistant.entity.inf.IData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.MeituanService;
@@ -50,28 +52,30 @@ public class OptionKeywordFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 listName = (String) parent.getItemAtPosition(position);
+                KeyWordData keyWordData = (KeyWordData) JsonFileIO.readJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME, KeyWordData.class);
+
                 // TODO：bug Json可能有列表被清空的情况
                 if (listName.equals(PinduoduoService.CLICKABLE_KEYWORD_LIST)) {
                     RecyclerView keyWordRecyclerView = _layout.findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoClickableKeyWordList());
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(keyWordData).getPingduoduoClickableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(PinduoduoService.CANCELABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = _layout.findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getPingduoduoCancelableKeyWordList());
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(keyWordData).getPingduoduoCancelableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(MeituanService.CLICKABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = _layout.findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanClickableKeyWordList());
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(keyWordData).getMeituanClickableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);
                 }else if(listName.equals(MeituanService.CANCELABLE_KEYWORD_LIST)){
                     RecyclerView keyWordRecyclerView = _layout.findViewById(R.id.keyWordRecyclerView);
-                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(JsonFileIO.readKeyWordDataJson(view.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME)).getMeituanCancelableKeyWordList());
+                    KeyWordViewAdapter keyWordViewAdapter = new KeyWordViewAdapter(Objects.requireNonNull(keyWordData).getMeituanCancelableKeyWordList());
                     keyWordRecyclerView.setAdapter(keyWordViewAdapter);
                     keyWordRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
                     createAddKeyWordItem(keyWordViewAdapter);

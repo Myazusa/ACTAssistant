@@ -1,6 +1,8 @@
 package github.kutouzi.actassistant.entity;
 
-public class ClientViewData {
+import github.kutouzi.actassistant.entity.inf.IData;
+
+public class ClientViewData implements IData {
     private final String clientInfo;
     private final int clientPreview;
 

@@ -37,7 +37,8 @@ public class OptionSwipeupFragment extends Fragment {
         _minSwipeupTimeEditText = _layout.findViewById(R.id.minSwipeupTimeEditText);
         _maxDelayTimeEditText = _layout.findViewById(R.id.maxDelayTimeEditText);
         _minDelayTimeEditText = _layout.findViewById(R.id.minDelayTimeEditText);
-        SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME);
+
+        SwipeUpData swipeUpData = (SwipeUpData) JsonFileIO.readJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME,SwipeUpData.class);
 
         Optional.ofNullable(swipeUpData).ifPresent(s -> {
             _maxSwipeupTimeEditText.setText(String.valueOf(s.getRandomMaxSwipeupValue()));
@@ -51,7 +52,7 @@ public class OptionSwipeupFragment extends Fragment {
                     if(Integer.parseInt(_maxSwipeupTimeEditText.getText().toString()) >= s.getRandomMinSwipeupValue()){
                         // 检测是否大于等于当前最小值
                         s.setRandomMaxSwipeupValue(Integer.parseInt(_maxSwipeupTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(getContext(),JsonFileDefinition.SWIPEUP_JSON_NAME,s);
+                        JsonFileIO.writeJson(getContext(),JsonFileDefinition.SWIPEUP_JSON_NAME,s);
                     }else {
                         // 小于的话就设置回去
                         s.setRandomMaxSwipeupValue(s.getRandomMaxSwipeupValue());
@@ -65,7 +66,7 @@ public class OptionSwipeupFragment extends Fragment {
                 Optional.ofNullable(swipeUpData).ifPresent(s->{
                     if(Integer.parseInt(_minSwipeupTimeEditText.getText().toString()) <= s.getRandomMaxSwipeupValue()){
                         s.setRandomMinSwipeupValue(Integer.parseInt(_minSwipeupTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(getContext(),JsonFileDefinition.SWIPEUP_JSON_NAME,s);
+                        JsonFileIO.writeJson(getContext(),JsonFileDefinition.SWIPEUP_JSON_NAME,s);
                     }else {
                         s.setRandomMinSwipeupValue(s.getRandomMinSwipeupValue());
                         GT.toast_time("写入失败：错误的值",3000);
@@ -78,7 +79,7 @@ public class OptionSwipeupFragment extends Fragment {
                 Optional.ofNullable(swipeUpData).ifPresent(s->{
                     if(Integer.parseInt(_maxDelayTimeEditText.getText().toString()) >= s.getRandomMinDelayValue()) {
                         s.setRandomMaxDelayValue(Integer.parseInt(_maxDelayTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME, s);
+                        JsonFileIO.writeJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME, s);
                     }else {
                         s.setRandomMaxDelayValue(s.getRandomMaxDelayValue());
                         GT.toast_time("写入失败：错误的值",3000);
@@ -91,7 +92,7 @@ public class OptionSwipeupFragment extends Fragment {
                 Optional.ofNullable(swipeUpData).ifPresent(s->{
                     if(Integer.parseInt(_minDelayTimeEditText.getText().toString()) <= s.getRandomMaxDelayValue()) {
                         s.setRandomMinDelayValue(Integer.parseInt(_minDelayTimeEditText.getText().toString()));
-                        JsonFileIO.writeSwipeUpDataJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME, s);
+                        JsonFileIO.writeJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME, s);
                     }else {
                         s.setRandomMinDelayValue(s.getRandomMinDelayValue());
                         GT.toast_time("写入失败：错误的值",3000);

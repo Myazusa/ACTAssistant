@@ -1,6 +1,8 @@
 package github.kutouzi.actassistant.entity;
 
-public class LocalServerIPData {
+import github.kutouzi.actassistant.entity.inf.IData;
+
+public class LocalServerIPData  implements IData {
     private String localServerIPAddress;
     private String localServerPort;
 

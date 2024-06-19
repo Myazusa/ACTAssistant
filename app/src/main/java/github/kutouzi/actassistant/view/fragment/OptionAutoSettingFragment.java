@@ -1,7 +1,5 @@
 package github.kutouzi.actassistant.view.fragment;
 
-import android.annotation.SuppressLint;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,9 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.gsls.gt.GT;
 
 import github.kutouzi.actassistant.R;
+import github.kutouzi.actassistant.entity.AutoSettingData;
+import github.kutouzi.actassistant.enums.JsonFileDefinition;
+import github.kutouzi.actassistant.io.JsonFileIO;
 
 public class OptionAutoSettingFragment extends Fragment {
     private int _layoutResId;
@@ -29,14 +30,18 @@ public class OptionAutoSettingFragment extends Fragment {
         }
         _layout = inflater.inflate(_layoutResId, container, false);
         autoScanApplicationSwitch = _layout.findViewById(R.id.autoScanApplicationSwitch);
+        AutoSettingData autoSettingData = (AutoSettingData) JsonFileIO.readJson(getContext(), JsonFileDefinition.AutoSetting_JSON_NAME, AutoSettingData.class);
+        autoScanApplicationSwitch.setChecked(autoSettingData.getAutoScanApplicationButtonState());
         autoScanApplicationSwitch.setOnCheckedChangeListener((v, isChecked) -> {
             if(isChecked){
                 autoScanApplicationSwitch.setText("开启中");
                 autoScanApplicationSwitch.setTextColor( getResources().getColor(R.color.my_app_accent));
+                JsonFileIO.writeJson(getContext(), JsonFileDefinition.AutoSetting_JSON_NAME, new AutoSettingData(true));
                 GT.toast_time("自动切换应用被开启",3000);
             }else {
                 autoScanApplicationSwitch.setText("关闭中");
                 autoScanApplicationSwitch.setTextColor(getResources().getColor(R.color.my_app_on_primary));
+                JsonFileIO.writeJson(getContext(), JsonFileDefinition.AutoSetting_JSON_NAME, new AutoSettingData(false));
                 GT.toast_time("自动切换应用被关闭",3000);
             }
         });

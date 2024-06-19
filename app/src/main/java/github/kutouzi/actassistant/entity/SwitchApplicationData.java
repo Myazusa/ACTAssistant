@@ -1,6 +1,8 @@
 package github.kutouzi.actassistant.entity;
 
-public class SwitchApplicationData {
+import github.kutouzi.actassistant.entity.inf.IData;
+
+public class SwitchApplicationData  implements IData {
     public int getSwitchApplicationTime() {
         return switchApplicationTime;
     }

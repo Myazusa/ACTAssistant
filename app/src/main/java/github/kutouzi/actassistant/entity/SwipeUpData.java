@@ -1,6 +1,9 @@
 package github.kutouzi.actassistant.entity;
 
-public class SwipeUpData {
+import github.kutouzi.actassistant.config.DataDefaultConfig;
+import github.kutouzi.actassistant.entity.inf.IData;
+
+public class SwipeUpData implements IData {
     private int randomMaxSwipeupValue;
     private int randomMinSwipeupValue;
     private int randomMaxDelayValue;

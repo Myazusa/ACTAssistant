@@ -43,9 +43,9 @@ public class UploadIpaddressFragment extends Fragment {
         // TODO:获取ip地址，转化对象存储
         MaterialButton sendToServerButton = _layout.findViewById(R.id.sendToServerButton);
         sendToServerButton.setOnClickListener(v->{
-            SwipeUpData swipeUpData = JsonFileIO.readSwipeUpDataJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME);
+            SwipeUpData swipeUpData = (SwipeUpData) JsonFileIO.readJson(getContext(), JsonFileDefinition.SWIPEUP_JSON_NAME,SwipeUpData.class);
             JsonFileNIO.sendSwipeUpJsonToQt(JsonFileIO._gson.toJson(swipeUpData));
-            KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(getContext(),JsonFileDefinition.KEYWORD_JSON_NAME);
+            KeyWordData keyWordData = (KeyWordData) JsonFileIO.readJson(getContext(),JsonFileDefinition.KEYWORD_JSON_NAME,KeyWordData.class);
             JsonFileNIO.sendSwipeUpJsonToQt(JsonFileIO._gson.toJson(keyWordData));
         });
 

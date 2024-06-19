@@ -31,20 +31,22 @@ public class OptionSwitchAppFragment extends Fragment {
         }
         _layout = inflater.inflate(_layoutResId, container, false);
         _switchApplicationTimeEditText = _layout.findViewById(R.id.switchApplicationTimeEditText);
-        SwitchApplicationData switchApplicationData = JsonFileIO.readSwitchApplicationDataJson(getContext(), JsonFileDefinition.SWITCHAPP_JSON_NAME);
+        SwitchApplicationData switchApplicationData = (SwitchApplicationData) JsonFileIO.readJson(getContext(), JsonFileDefinition.SWITCHAPP_JSON_NAME,SwitchApplicationData.class);
         Optional.ofNullable(switchApplicationData).ifPresent(s -> {
             // 因为显示的是分钟，所以要除以60000得到分钟
-            _switchApplicationTimeEditText.setText(String.valueOf(s.getSwitchApplicationTime()/60000));
+            _switchApplicationTimeEditText.setText(String.valueOf(s.getSwitchApplicationTime() /60000));
         });
         _switchApplicationTimeEditText.setOnFocusChangeListener((v, hasFocus)->{
             if(!hasFocus){
-                Optional.ofNullable(switchApplicationData).ifPresent(s->{
+                SwitchApplicationData data = (SwitchApplicationData)JsonFileIO.readJson(getContext(), JsonFileDefinition.SWITCHAPP_JSON_NAME,SwitchApplicationData.class);
+                Optional.ofNullable(data).ifPresent(s->{
                     // 获取文本得到的是分钟，需要乘以60000得到毫秒
-                    if(Integer.parseInt(_switchApplicationTimeEditText.getText().toString()) * 60000 <= s.getSwitchApplicationTime()) {
-                        s.setSwitchApplicationTime(Integer.parseInt(_switchApplicationTimeEditText.getText().toString()) * 60000);
-                        JsonFileIO.writeSwitchApplicationDataJson(getContext(), JsonFileDefinition.SWITCHAPP_JSON_NAME, s);
+                    int i = Integer.parseInt(_switchApplicationTimeEditText.getText().toString()) * 60000;
+                    if(i != 0 && i <= 3600000) {
+                        s.setSwitchApplicationTime(i);
+                        JsonFileIO.writeJson(getContext(), JsonFileDefinition.SWITCHAPP_JSON_NAME, s);
                     }else {
-                        s.setSwitchApplicationTime(s.getSwitchApplicationTime());
+                        s.setSwitchApplicationTime(data.getSwitchApplicationTime()/60000);
                         GT.toast_time("写入失败：错误的值",3000);
                     }
                 });

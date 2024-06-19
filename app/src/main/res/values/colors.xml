@@ -42,12 +42,9 @@
 
 
 
-    <color name="button_color">#C9FFFFFF</color>
-    <color name="button_rounded_color">#C9FFFF66</color>
-    <color name="pressed_button_color">#C9FFA9A9</color>
-    <color name="pressed_button_rounded_color">#C9DCABFF</color>
-    <color name="disable_button_color">#C95A5A5A</color>
-    <color name="disable_button_rounded_color">#C9191919</color>
+    <color name="default_background_button_color">#5EE1BEE7</color>
+    <color name="triggered_background_button_color">#5EFFA9A9</color>
+    <color name="disabled_background_button_color">#5E000000</color>
 
     <color name="button_background_color">#C99AFFE2</color>
     <color name="button_background_rounded_color">#C99AFF55</color>

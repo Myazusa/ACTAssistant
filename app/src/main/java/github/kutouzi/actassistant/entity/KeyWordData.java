@@ -2,7 +2,9 @@ package github.kutouzi.actassistant.entity;
 
 import java.util.List;
 
-public class KeyWordData {
+import github.kutouzi.actassistant.entity.inf.IData;
+
+public class KeyWordData  implements IData {
     // TODO：设计不合理
     public List<String> getPingduoduoClickableKeyWordList() {
         return pingduoduoClickableKeyWordList;

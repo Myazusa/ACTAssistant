@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import github.kutouzi.actassistant.R;
 import github.kutouzi.actassistant.entity.KeyWordData;
+import github.kutouzi.actassistant.entity.inf.IData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.MeituanService;
@@ -53,7 +54,6 @@ public class KeyWordViewAdapter extends RecyclerView.Adapter<KeyWordViewAdapter.
     public int getItemCount() {
         return keyWordList.size();
     }
-
     public void addItem(String s,View v){
         keyWordList.add(s);
         updateJsonFile(v);
@@ -62,20 +62,20 @@ public class KeyWordViewAdapter extends RecyclerView.Adapter<KeyWordViewAdapter.
     }
 
     private void updateJsonFile(View v){
-        KeyWordData keyWordData = JsonFileIO.readKeyWordDataJson(v.getContext(),JsonFileDefinition.KEYWORD_JSON_NAME);
+        KeyWordData keyWordData = (KeyWordData) JsonFileIO.readJson(v.getContext(),JsonFileDefinition.KEYWORD_JSON_NAME, KeyWordData.class);
         Optional.ofNullable(keyWordData).ifPresent(s->{
             if(OptionKeywordFragment.listName.equals(PinduoduoService.CANCELABLE_KEYWORD_LIST)){
                 keyWordData.setPingduoduoCancelableKeyWordList(keyWordList);
-                JsonFileIO.writeKeyWordDataJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
+                JsonFileIO.writeJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
             } else if (OptionKeywordFragment.listName.equals(PinduoduoService.CLICKABLE_KEYWORD_LIST)) {
                 keyWordData.setPingduoduoClickableKeyWordList(keyWordList);
-                JsonFileIO.writeKeyWordDataJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
+                JsonFileIO.writeJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
             } else if (OptionKeywordFragment.listName.equals(MeituanService.CANCELABLE_KEYWORD_LIST)) {
                 keyWordData.setMeituanCancelableKeyWordList(keyWordList);
-                JsonFileIO.writeKeyWordDataJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
+                JsonFileIO.writeJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
             } else if (OptionKeywordFragment.listName.equals(MeituanService.CLICKABLE_KEYWORD_LIST)) {
                 keyWordData.setMeituanClickableKeyWordList(keyWordList);
-                JsonFileIO.writeKeyWordDataJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
+                JsonFileIO.writeJson(v.getContext(), JsonFileDefinition.KEYWORD_JSON_NAME,keyWordData);
             }
         });
     }

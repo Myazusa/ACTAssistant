@@ -21,11 +21,13 @@ public class OptionFragment extends Fragment {
     private MaterialButton _switchApplicationSettingButton;
     private MaterialButton _autoSettingButton;
     private MaterialButton _keyWordButton;
+    private MaterialButton _timedTaskButton;
 
     private OptionSwipeupFragment _optionSwipeupFragment = null;
     private OptionKeywordFragment _optionKeywordFragment = null;
     private OptionAutoSettingFragment _optionAutoSettingFragment = null;
     private OptionSwitchAppFragment _optionSwitchAppFragment = null;
+    private OptionTimedTaskFragment _timedTaskFragment = null;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -90,6 +92,20 @@ public class OptionFragment extends Fragment {
                         .commit();
             }
             FragmentUtil.switchFragment(getParentFragmentManager(),_optionKeywordFragment);
+        });
+        _timedTaskButton = _layout.findViewById(R.id.timedTaskButton);
+        _timedTaskButton.setOnClickListener(v -> {
+            if (_timedTaskFragment == null){
+                _timedTaskFragment = new OptionTimedTaskFragment();
+                Bundle b = new Bundle();
+                b.putInt("layoutResId", R.layout.fragment_option_timedtask);
+                _timedTaskFragment.setArguments(b);
+                getParentFragmentManager().beginTransaction()
+                        .add(R.id.fragmentSlot, _timedTaskFragment)
+                        .hide(_timedTaskFragment)
+                        .commit();
+            }
+            FragmentUtil.switchFragment(getParentFragmentManager(),_timedTaskFragment);
         });
         return _layout;
     }

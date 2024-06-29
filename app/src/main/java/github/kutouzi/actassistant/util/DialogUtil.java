@@ -4,12 +4,15 @@ import android.accessibilityservice.AccessibilityService;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import github.kutouzi.actassistant.service.ACTFloatingWindowService;
+import github.kutouzi.actassistant.view.androidservice.ACTFloatingWindowService;
 
 public class DialogUtil {
     private static final String _TAG = DialogUtil.class.getName();
+    private static Set<String> previousChildNodes = new HashSet<>();
 //    public static void clickDialog(AccessibilityNodeInfo nodeInfo, List<String> keyWordList) {
 //        for (String s: keyWordList) {
 //            if(nodeInfo.findAccessibilityNodeInfosByText(s) != null){
@@ -26,10 +29,11 @@ public class DialogUtil {
 //        }
 //    }
 
-    public static void cancelDialog(AccessibilityNodeInfo nodeInfo,ACTFloatingWindowService actFloatingWindowService,List<String> keyWordList){
+
+    public static void cancelDialog(AccessibilityNodeInfo nodeInfo,AccessibilityService service,List<String> keyWordList){
         for (String s:keyWordList) {
             if(!nodeInfo.findAccessibilityNodeInfosByText(s).isEmpty()){
-                actFloatingWindowService.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
+                service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
                 Log.i(_TAG,"找到'" + s + "'关闭了弹窗");
             }
         }

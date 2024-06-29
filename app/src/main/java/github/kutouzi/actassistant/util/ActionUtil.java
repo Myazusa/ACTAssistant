@@ -12,7 +12,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import java.util.List;
 
 import github.kutouzi.actassistant.entity.SwipeUpData;
-import github.kutouzi.actassistant.service.ACTFloatingWindowService;
+import github.kutouzi.actassistant.view.androidservice.ACTFloatingWindowService;
 
 public class ActionUtil {
     private static final String _TAG = ActionUtil.class.getName();
@@ -27,7 +27,7 @@ public class ActionUtil {
             float startX = getScreenWidth(resources) / 2f;
             float startY = getScreenHeight(resources) / 2f;
             float endX = startX;
-            float endY = getScreenHeight(resources) / 4f;
+            float endY = getScreenHeight(resources) / 16f;
 
             Path path = new Path();
             path.moveTo(startX, startY);
@@ -111,6 +111,11 @@ public class ActionUtil {
         while (layers>0){
             accessibilityService.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
             layers--;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

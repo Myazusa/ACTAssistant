@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:itemActiveIndicatorStyle="@style/CustomActiveIndicator"
         app:labelVisibilityMode="auto"
-        app:menuGravity="center" />
+        app:menuGravity="top"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentSlot"

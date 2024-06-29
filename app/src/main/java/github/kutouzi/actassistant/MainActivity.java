@@ -13,9 +13,11 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,16 +28,22 @@ import com.google.android.material.navigationrail.NavigationRailView;
 import java.util.List;
 
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
-import github.kutouzi.actassistant.service.ACTFloatingWindowService;
+import github.kutouzi.actassistant.view.androidservice.ACTFloatingWindowService;
 import github.kutouzi.actassistant.util.FragmentUtil;
+import github.kutouzi.actassistant.util.KeyboardUtil;
 import github.kutouzi.actassistant.view.fragment.CilentListviewFragment;
+import github.kutouzi.actassistant.view.fragment.HelpFragment;
 import github.kutouzi.actassistant.view.fragment.OptionFragment;
-import github.kutouzi.actassistant.view.fragment.UploadIpaddressFragment;
+import github.kutouzi.actassistant.view.fragment.ServerFragment;
 
 
 //使用./gradlew assembleRelease来生成apk
 public class MainActivity extends AppCompatActivity  {
     private static final String _TAG = MainActivity.class.getName();
+    private static MainActivity _INSTANCE;
+    public static MainActivity getInstance() {
+        return _INSTANCE;
+    }
 
     //////////////////////
     //全局变量相关
@@ -57,7 +65,8 @@ public class MainActivity extends AppCompatActivity  {
     //Fragment相关
     private OptionFragment _optionFragment = null;
     private CilentListviewFragment _cilentListviewFragment = null;
-    private UploadIpaddressFragment _uploadIpaddressFragment = null;
+    private ServerFragment _serverFragment = null;
+    private HelpFragment _helpFragment = null;
 
     //////////////////////////////////
 
@@ -107,17 +116,24 @@ public class MainActivity extends AppCompatActivity  {
                     getSupportFragmentManager().beginTransaction().add(R.id.fragmentSlot, _optionFragment).hide(_optionFragment).commit();
                 }
                 FragmentUtil.switchFragment(getSupportFragmentManager(),_optionFragment);
-            }else if (itemId == R.id.menuUpload) {
-                if (_uploadIpaddressFragment == null){
-                    _uploadIpaddressFragment = new UploadIpaddressFragment();
+            }else if (itemId == R.id.menuServer) {
+                if (_serverFragment == null){
+                    _serverFragment = new ServerFragment();
                     Bundle b = new Bundle();
-                    b.putInt("layoutResId", R.layout.fragment_upload_ipaddress);
-                    _uploadIpaddressFragment.setArguments(b);
-                    getSupportFragmentManager().beginTransaction().add(R.id.fragmentSlot, _uploadIpaddressFragment).hide(_uploadIpaddressFragment).commit();
+                    b.putInt("layoutResId", R.layout.fragment_server);
+                    _serverFragment.setArguments(b);
+                    getSupportFragmentManager().beginTransaction().add(R.id.fragmentSlot, _serverFragment).hide(_serverFragment).commit();
                 }
-                FragmentUtil.switchFragment(getSupportFragmentManager(),_uploadIpaddressFragment);
+                FragmentUtil.switchFragment(getSupportFragmentManager(), _serverFragment);
             }else if(itemId == R.id.menuHelp){
-
+                if(_helpFragment == null){
+                    _helpFragment = new HelpFragment();
+                    Bundle b = new Bundle();
+                    b.putInt("layoutResId", R.layout.fragment_help);
+                    _helpFragment.setArguments(b);
+                    getSupportFragmentManager().beginTransaction().add(R.id.fragmentSlot, _helpFragment).hide(_helpFragment).commit();
+                }
+                FragmentUtil.switchFragment(getSupportFragmentManager(),_helpFragment);
             }
             return true;
         });
@@ -221,5 +237,23 @@ public class MainActivity extends AppCompatActivity  {
             _isViewAdded = false;
             Log.i(_TAG, "悬浮窗被移除");
         }
+    }
+    // 清除edittext焦点用
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View v = getCurrentFocus();
+        if (v != null && (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE)
+                && v instanceof EditText && !v.getClass().getName().startsWith("android.webkit.")) {
+            int[] scrcoords = new int[2];
+            v.getLocationOnScreen(scrcoords);
+            float x = ev.getRawX() + v.getLeft() - scrcoords[0];
+            float y = ev.getRawY() + v.getTop() - scrcoords[1];
+
+            if (x < v.getLeft() || x >= v.getRight() || y < v.getTop() || y > v.getBottom()) {
+                KeyboardUtil.hideKeyboard(this,v);
+                v.clearFocus();
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

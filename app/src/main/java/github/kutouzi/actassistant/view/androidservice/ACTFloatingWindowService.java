@@ -1,4 +1,4 @@
-package github.kutouzi.actassistant.service;
+package github.kutouzi.actassistant.view.androidservice;
 
 import static github.kutouzi.actassistant.MainActivity.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE;
 import static github.kutouzi.actassistant.MainActivity.windowView;
@@ -8,9 +8,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -22,6 +23,7 @@ import com.gsls.gt.GT;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
@@ -29,18 +31,25 @@ import github.kutouzi.actassistant.entity.AutoSettingData;
 import github.kutouzi.actassistant.entity.KeyWordData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.entity.SwitchApplicationData;
-import github.kutouzi.actassistant.entity.inf.IData;
+import github.kutouzi.actassistant.entity.TimedTaskData;
 import github.kutouzi.actassistant.enums.JsonFileDefinition;
 import github.kutouzi.actassistant.enums.ToggleStateEnum;
-import github.kutouzi.actassistant.exception.FailedTaskException;
+import github.kutouzi.actassistant.event.accessibility.AutoTaskAccessibilityEvent;
+import github.kutouzi.actassistant.event.accessibility.ListeningDialogAccessibilityEvent;
 import github.kutouzi.actassistant.exception.PakageNotFoundException;
 import github.kutouzi.actassistant.io.JsonFileIO;
+import github.kutouzi.actassistant.service.BaidujisuService;
+import github.kutouzi.actassistant.service.DouyinjisuService;
+import github.kutouzi.actassistant.service.KuaishoujisuService;
+import github.kutouzi.actassistant.service.MeituanService;
+import github.kutouzi.actassistant.service.NullService;
+import github.kutouzi.actassistant.service.PinduoduoService;
+import github.kutouzi.actassistant.service.XiaohongshuService;
 import github.kutouzi.actassistant.util.ActionUtil;
 import github.kutouzi.actassistant.util.DialogUtil;
 import github.kutouzi.actassistant.util.PackageCheckUtil;
 import github.kutouzi.actassistant.util.RandomUtil;
 import github.kutouzi.actassistant.view.button.ToggleButton;
-import github.kutouzi.actassistant.view.fragment.OptionAutoSettingFragment;
 
 
 public class ACTFloatingWindowService extends AccessibilityService {
@@ -60,16 +69,17 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private ToggleButton _listeningDialogButton;
     private ToggleButton _startApplicationButton;
     private ToggleButton _swipeUpButton;
+    private ToggleButton _taskButton;
 
     //////////////////////////////////
 
 
     //////////////////////
     //全局标记相关
-    private static int _scanApplicationFlag = 0;
+    public static int scanApplicationFlag = 0;
     private List<String> installedPackageList;
     private CountDownTimer countDownTimer = null;
-    private static boolean _runTask = false;
+    public static boolean runTask = false;
 
     //////////////////////////////////
 
@@ -90,6 +100,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
                     createStartApplicationSwitch();
                     createReturnMainActivitySwitch();
                     createSwipeUpSwitch();
+                    createTaskSwitch();
 
                     createScanApplicationSwitch();
                     Log.i(_TAG,"悬浮窗已创建");
@@ -161,7 +172,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
                     GT.toast_time("未找到应用，切换下一个", 8000);
                     _startApplicationButton.callOnClick();
                 }
-                AutoSettingData autoSettingData = (AutoSettingData) JsonFileIO.readJson(this, JsonFileDefinition.AutoSetting_JSON_NAME, AutoSettingData.class);
+                AutoSettingData autoSettingData = (AutoSettingData) JsonFileIO.readJson(this, JsonFileDefinition.AUTOSETTING_JSON_NAME, AutoSettingData.class);
                 if(autoSettingData.getAutoScanApplicationButtonState()) {
                     startSwitchApplicationTimer();
                     _startApplicationButton.setButtonToDisabled();
@@ -232,7 +243,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
         _scanApplicationButton = windowView.findViewById(R.id.scanApplicationButton);
         _scanApplicationButton.setOnClickListener(v -> {
             if(_scanApplicationButton.isButtonState() != ToggleStateEnum.Disabled){
-                _scanApplicationFlag = PinduoduoService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
+                scanApplicationFlag = PinduoduoService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
                         + MeituanService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
                         + DouyinjisuService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
                         + KuaishoujisuService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
@@ -243,8 +254,8 @@ public class ACTFloatingWindowService extends AccessibilityService {
         });
     }
     private void findApplicationAction(){
-        if(_scanApplicationFlag != 0){
-            switch (_scanApplicationFlag){
+        if(scanApplicationFlag != 0){
+            switch (scanApplicationFlag){
                 case PinduoduoService.APPLICATION_INDEX:
                     PinduoduoService.getInsatance().switchToVideo(getRootInActiveWindow());
                     break;
@@ -277,8 +288,8 @@ public class ACTFloatingWindowService extends AccessibilityService {
         }
     }
     private void applicationAnnounce(){
-        if(_scanApplicationFlag != 0) {
-            switch (_scanApplicationFlag) {
+        if(scanApplicationFlag != 0) {
+            switch (scanApplicationFlag) {
                 case NullService.APPLICATION_INDEX:
                     GT.toast_time("没找到受支持的应用", 1000);
                     break;
@@ -340,9 +351,12 @@ public class ACTFloatingWindowService extends AccessibilityService {
             }
         });
     }
+
     // 此方法应该在开关状态改变后调用
     private void switchOtherButtonStates(){
-        if(_swipeUpButton.isButtonState() == ToggleStateEnum.Triggered || _listeningDialogButton.isButtonState() == ToggleStateEnum.Triggered){
+        if(_swipeUpButton.isButtonState() == ToggleStateEnum.Triggered
+                || _listeningDialogButton.isButtonState() == ToggleStateEnum.Triggered
+                || _taskButton.isButtonState() == ToggleStateEnum.Triggered){
             // 如果这三个按钮任意一个被按下过
             _returnMainActivityButton.setButtonToDisabled();
             _startApplicationButton.setButtonToDisabled();
@@ -356,76 +370,18 @@ public class ACTFloatingWindowService extends AccessibilityService {
             Log.i(_TAG, "悬浮窗开启应用按钮和返回按钮已启用");
         }
     }
-    private void switchFunctionToDialog(AccessibilityNodeInfo info){
-        switch (_scanApplicationFlag) {
-            case PinduoduoService.APPLICATION_INDEX:
-                DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull((KeyWordData)JsonFileIO.readJson(this,JsonFileDefinition.KEYWORD_JSON_NAME, KeyWordData.class)).getPingduoduoCancelableKeyWordList());
-                break;
-            case MeituanService.APPLICATION_INDEX:
-                DialogUtil.cancelDialog(info, this,
-                        Objects.requireNonNull((KeyWordData)JsonFileIO.readJson(this,JsonFileDefinition.KEYWORD_JSON_NAME,KeyWordData.class)).getMeituanCancelableKeyWordList());
-                break;
-            default:
-                break;
-        }
-    }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if(windowView != null){
-            if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED){
-                listeningDialogAccessibilityEvent(event);
-            }
-            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                //checkPackageNameAccessibilityEvent(event);
-            }
-            if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED){
-                if (_runTask){
-                    if(getRootInActiveWindow()!=null){
-                        switch (_scanApplicationFlag){
-                            case PinduoduoService.APPLICATION_INDEX:
-                                try{
-                                    PinduoduoService.getInsatance().autoHeshuiTask(getRootInActiveWindow(),this);
-                                }catch (FailedTaskException e){
-                                    Log.w(_TAG,e.getMessage());
-                                }
-                                break;
-                            case MeituanService.APPLICATION_INDEX:
-                                try{
-                                    MeituanService.getInsatance().autoCheckInTask(getRootInActiveWindow(),this);
-                                }catch (FailedTaskException e){
-                                    Log.w(_TAG,e.getMessage());
-                                }
-                                break;
-                            case DouyinjisuService.APPLICATION_INDEX:
-                                try{
-                                    DouyinjisuService.getInsatance().autoCheckInTask(getRootInActiveWindow(),this);
-                                }catch (FailedTaskException e){
-                                    Log.w(_TAG,e.getMessage());
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-    }
+            // 检测包名
+            //CheckPackageNameAccessibilityEvent.checkPackageNameAccessibilityEvent(event);
 
-    private void listeningDialogAccessibilityEvent(AccessibilityEvent event){
-        if (_listeningDialogButton.isButtonState() == ToggleStateEnum.Triggered) {
-            if(event.getSource() != null){
-                switchFunctionToDialog(event.getSource());
-            }
-        }
-    }
+            // 运行定时任务
+            AutoTaskAccessibilityEvent.autoTaskAccessibilityEvent(event,this);
 
-    private void checkPackageNameAccessibilityEvent(AccessibilityEvent event){
-        CharSequence packageName = event.getPackageName();
-        if (packageName != null) {
-            Log.d(_TAG, "前台应用包名为: " + packageName);
+            // 监听弹窗
+            ListeningDialogAccessibilityEvent.listeningDialogAccessibilityEvent(event,this,_listeningDialogButton);
         }
     }
 
@@ -439,5 +395,51 @@ public class ACTFloatingWindowService extends AccessibilityService {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
         Log.i(_TAG, "服务被释放");
+    }
+
+    private void createTaskSwitch(){
+        _taskButton = windowView.findViewById(R.id.taskButton);
+        _taskButton.setOnClickListener(v -> {
+            if(_taskButton.isButtonState() == ToggleStateEnum.Default){
+                startTask();
+                _taskButton.setButtonToTriggered();
+                switchOtherButtonStates();
+                Log.i(_TAG,"自动任务开启");
+            }else if(_taskButton.isButtonState() == ToggleStateEnum.Triggered){
+                stopTask();
+                _taskButton.setButtonToDefault();
+                switchOtherButtonStates();
+                cancelTimer();
+                Log.i(_TAG,"自动任务关闭");
+            }
+        });
+    }
+
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            doTask();
+            TimedTaskData timedTaskData = (TimedTaskData) JsonFileIO.readJson(getApplicationContext(), JsonFileDefinition.TIMEDTASK_JSON_NAME, TimedTaskData.class);
+            Optional.ofNullable(timedTaskData).ifPresent(s->{
+                handler.postDelayed(this, timedTaskData.getTimedTaskDelayValue());
+            });
+
+        }
+    };
+    public void startTask() {
+        TimedTaskData timedTaskData = (TimedTaskData) JsonFileIO.readJson(getApplicationContext(), JsonFileDefinition.TIMEDTASK_JSON_NAME, TimedTaskData.class);
+        Optional.ofNullable(timedTaskData).ifPresent(s->{
+            handler.postDelayed(runnable, timedTaskData.getTimedTaskDelayValue());
+        });
+    }
+
+    public void stopTask() {
+        handler.removeCallbacks(runnable);
+        runTask = false;
+    }
+
+    private void doTask() {
+        runTask = true;
     }
 }

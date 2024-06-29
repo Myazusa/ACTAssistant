@@ -47,6 +47,16 @@
                 android:layout_weight="1"
                 app:backgroundTint="#5EE1BEE7"
                 app:icon="@drawable/magnifying_glass_circle__streamline_core" />
+
+            <github.kutouzi.actassistant.view.button.ToggleButton
+                android:id="@+id/taskButton"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:backgroundTint="#5EE1BEE7"
+                app:icon="@drawable/blank_calendar__streamline_core"
+                app:iconTint="#A1FFFFFF" />
             <github.kutouzi.actassistant.view.button.ToggleButton
                 android:id="@+id/listeningDialogButton"
                 android:layout_width="match_parent"

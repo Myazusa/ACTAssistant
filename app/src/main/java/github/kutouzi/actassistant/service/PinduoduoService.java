@@ -53,15 +53,34 @@ public class PinduoduoService extends ApplicationService{
             throw new FailedTaskException("未能打开任务页");
         }
         layers++;
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         if(!ActionUtil.findClickAction(nodeInfo,"每日8次喝水赚钱","去领取")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能喝水打卡");
         }
         layers++;
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         if(!ActionUtil.clickAction(nodeInfo,"喝水赚现金")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能领取金币");
         }
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         ActionUtil.returnAction(accessibilityService,layers);
     }
 }

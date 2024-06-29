@@ -55,9 +55,19 @@ public class MeituanService extends ApplicationService{
             throw new FailedTaskException("未能打开任务页");
         }
         layers++;
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if(!ActionUtil.clickAction(nodeInfo,"去打卡")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能点击到打卡");
+        }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         ActionUtil.returnAction(accessibilityService,layers);
     }

@@ -14,17 +14,8 @@ public class DataDefaultConfig {
             .collect(Collectors.toList());
     public static final List<String> defaultMeituanCancelableKeyWordList = Stream.of("现金秒到账","领取今日奖励")
             .collect(Collectors.toList());
-    // 控制每个操作的间隔
-    public static final int defaultRandomMaxSwipeupValue = 14000;
-    public static final int defaultRandomMinSwipeupValue = 10000;
 
-    // 控制上划所耗的时间
-    public static final int defaultRandomMaxDelayValue = 400;
-    public static final int defaultRandomMinDelayValue = 200;
 
-    public static final String defaultLocalServerIPAddress = "192.168.1.100";
-    public static final String defaultLocalServerPort = "48802";
 
-    // 控制切换应用的时间间隔
-    public static final int defaultSwitchApplicationTime = 600000;
+
 }

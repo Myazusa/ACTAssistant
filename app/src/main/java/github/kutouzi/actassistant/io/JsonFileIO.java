@@ -8,15 +8,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.Key;
-import java.util.Objects;
 
 import github.kutouzi.actassistant.config.AutoSettingDefaultConfig;
 import github.kutouzi.actassistant.config.DataDefaultConfig;
+import github.kutouzi.actassistant.config.FloatWindowDefaultConfig;
+import github.kutouzi.actassistant.config.HelpDefaultConfig;
+import github.kutouzi.actassistant.config.ServerDefaultConfig;
 import github.kutouzi.actassistant.entity.AutoSettingData;
+import github.kutouzi.actassistant.entity.HelpData;
+import github.kutouzi.actassistant.entity.RemoteIpaddressData;
 import github.kutouzi.actassistant.entity.KeyWordData;
+import github.kutouzi.actassistant.entity.LocalServerIPData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.entity.SwitchApplicationData;
+import github.kutouzi.actassistant.entity.TimedTaskData;
 import github.kutouzi.actassistant.entity.inf.IData;
 
 public class JsonFileIO extends FileIO {
@@ -52,35 +57,33 @@ public class JsonFileIO extends FileIO {
         return null;
     }
     private static <T> void writeDefaultJson(Context context, String jsonFileName, Class<T> dataType) {
+        String jsonString = null;
+
         if(dataType == SwipeUpData.class){
-            SwipeUpData swipeUpData = new SwipeUpData(DataDefaultConfig.defaultRandomMaxSwipeupValue, DataDefaultConfig.defaultRandomMinSwipeupValue,
-                    DataDefaultConfig.defaultRandomMaxDelayValue, DataDefaultConfig.defaultRandomMinDelayValue);
-            String jsonString = _gson.toJson(swipeUpData);
-            try (FileOutputStream fileOutputStream = context.openFileOutput(jsonFileName, Context.MODE_PRIVATE)) {
-                fileOutputStream.write(jsonString.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            SwipeUpData swipeUpData = new SwipeUpData(FloatWindowDefaultConfig.defaultRandomMaxSwipeupValue, FloatWindowDefaultConfig.defaultRandomMinSwipeupValue,
+                    FloatWindowDefaultConfig.defaultRandomMaxDelayValue, FloatWindowDefaultConfig.defaultRandomMinDelayValue);
+            jsonString = _gson.toJson(swipeUpData);
         }else if (dataType == KeyWordData.class){
             KeyWordData keyWordData = new KeyWordData(DataDefaultConfig.defaultPingduoduoClickableKeyWordList, DataDefaultConfig.defaultMeituanClickableKeyWordList,
                     DataDefaultConfig.defaultPingduoduoCancelableKeyWordList, DataDefaultConfig.defaultMeituanCancelableKeyWordList);
-            String jsonString = _gson.toJson(keyWordData);
-            try (FileOutputStream fileOutputStream = context.openFileOutput(jsonFileName, Context.MODE_PRIVATE)) {
-                fileOutputStream.write(jsonString.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            jsonString = _gson.toJson(keyWordData);
         }else if (dataType == SwitchApplicationData.class){
-            SwitchApplicationData switchApplicationData = new SwitchApplicationData(DataDefaultConfig.defaultSwitchApplicationTime);
-            String jsonString = _gson.toJson(switchApplicationData);
-            try (FileOutputStream fileOutputStream = context.openFileOutput(jsonFileName, Context.MODE_PRIVATE)) {
-                fileOutputStream.write(jsonString.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            SwitchApplicationData switchApplicationData = new SwitchApplicationData(FloatWindowDefaultConfig.defaultSwitchApplicationTime);
+            jsonString = _gson.toJson(switchApplicationData);
         }else if(dataType == AutoSettingData.class){
             AutoSettingData autoSettingData = new AutoSettingData(AutoSettingDefaultConfig.autoScanApplicationButtonDefaultState);
-            String jsonString = _gson.toJson(autoSettingData);
+            jsonString = _gson.toJson(autoSettingData);
+        }else if(dataType == HelpData.class){
+            HelpData helpData = new HelpData(HelpDefaultConfig.autoCheckUpdateSwitchDefaultState);
+            jsonString = _gson.toJson(helpData);
+        }else if(dataType == TimedTaskData.class){
+            TimedTaskData helpData = new TimedTaskData(FloatWindowDefaultConfig.defaultTimedTaskDelayValue);
+            jsonString = _gson.toJson(helpData);
+        }else if(dataType == RemoteIpaddressData.class){
+            RemoteIpaddressData remoteIpaddressData = new RemoteIpaddressData(ServerDefaultConfig.defaultLocalServerIPAddress, ServerDefaultConfig.defaultLocalServerPort);
+            jsonString = _gson.toJson(remoteIpaddressData);
+        }
+        if(jsonString != null){
             try (FileOutputStream fileOutputStream = context.openFileOutput(jsonFileName, Context.MODE_PRIVATE)) {
                 fileOutputStream.write(jsonString.getBytes());
             } catch (IOException e) {

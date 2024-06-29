@@ -30,18 +30,18 @@ public class OptionAutoSettingFragment extends Fragment {
         }
         _layout = inflater.inflate(_layoutResId, container, false);
         autoScanApplicationSwitch = _layout.findViewById(R.id.autoScanApplicationSwitch);
-        AutoSettingData autoSettingData = (AutoSettingData) JsonFileIO.readJson(getContext(), JsonFileDefinition.AutoSetting_JSON_NAME, AutoSettingData.class);
+        AutoSettingData autoSettingData = (AutoSettingData) JsonFileIO.readJson(getContext(), JsonFileDefinition.AUTOSETTING_JSON_NAME, AutoSettingData.class);
         autoScanApplicationSwitch.setChecked(autoSettingData.getAutoScanApplicationButtonState());
         autoScanApplicationSwitch.setOnCheckedChangeListener((v, isChecked) -> {
             if(isChecked){
-                autoScanApplicationSwitch.setText("开启中");
+                //autoScanApplicationSwitch.setText("开启中");
                 autoScanApplicationSwitch.setTextColor( getResources().getColor(R.color.my_app_accent));
-                JsonFileIO.writeJson(getContext(), JsonFileDefinition.AutoSetting_JSON_NAME, new AutoSettingData(true));
+                JsonFileIO.writeJson(getContext(), JsonFileDefinition.AUTOSETTING_JSON_NAME, new AutoSettingData(true));
                 GT.toast_time("自动切换应用被开启",3000);
             }else {
-                autoScanApplicationSwitch.setText("关闭中");
+                //autoScanApplicationSwitch.setText("关闭中");
                 autoScanApplicationSwitch.setTextColor(getResources().getColor(R.color.my_app_on_primary));
-                JsonFileIO.writeJson(getContext(), JsonFileDefinition.AutoSetting_JSON_NAME, new AutoSettingData(false));
+                JsonFileIO.writeJson(getContext(), JsonFileDefinition.AUTOSETTING_JSON_NAME, new AutoSettingData(false));
                 GT.toast_time("自动切换应用被关闭",3000);
             }
         });

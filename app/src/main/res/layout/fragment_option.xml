@@ -11,31 +11,18 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <LinearLayout
+        <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/swipeUpSettingButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="上划时间设置"
-                app:icon="@drawable/circle_clock__streamline_core"
-                app:iconGravity="top" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/switchApplicationSettingButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="切换应用设置"
-                app:icon="@drawable/align_front_1__streamline_core"
-                app:iconGravity="top" />
-        </LinearLayout>
+            app:dividerInsetStart="16dp"
+            app:dividerInsetEnd="16dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="全局设置"
+            android:textSize="18dp"
+            android:textColor="@color/my_app_accent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,6 +53,67 @@
                 android:text="关键词搜索列表设置"
                 app:icon="@drawable/definition_search_book__streamline_core" />
         </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:dividerInsetStart="16dp"
+            app:dividerInsetEnd="16dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="悬浮窗相关设置"
+            android:textSize="18dp"
+            android:textColor="@color/my_app_accent"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/swipeUpSettingButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="上划设置"
+                app:icon="@drawable/one_finger_drag_vertical__streamline_core" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/switchApplicationSettingButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="应用切换设置"
+                app:icon="@drawable/align_front_1__streamline_core" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/timedTaskButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="定时任务设置"
+                app:icon="@drawable/circle_clock__streamline_core" />
+        </LinearLayout>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:dividerInsetStart="16dp"
+            app:dividerInsetEnd="16dp"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

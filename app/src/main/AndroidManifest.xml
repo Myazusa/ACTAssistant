@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <queries>
         <intent>
@@ -35,7 +38,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".service.ACTFloatingWindowService"
+        <service android:name=".view.androidservice.ACTFloatingWindowService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:theme="@style/Theme.ACTAssistant"
             android:exported="true">

@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.gsls.gt.GT;
 
 import java.util.Optional;
@@ -22,10 +22,10 @@ import github.kutouzi.actassistant.io.JsonFileIO;
 public class OptionSwipeupFragment extends Fragment {
     private int _layoutResId;
     private View _layout;
-    private EditText _maxSwipeupTimeEditText;
-    private EditText _minSwipeupTimeEditText;
-    private EditText _maxDelayTimeEditText;
-    private EditText _minDelayTimeEditText;
+    private TextInputEditText _maxSwipeupTimeEditText;
+    private TextInputEditText _minSwipeupTimeEditText;
+    private TextInputEditText _maxDelayTimeEditText;
+    private TextInputEditText _minDelayTimeEditText;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -33,6 +33,7 @@ public class OptionSwipeupFragment extends Fragment {
             _layoutResId = getArguments().getInt("layoutResId");
         }
         _layout = inflater.inflate(_layoutResId, container, false);
+
         _maxSwipeupTimeEditText = _layout.findViewById(R.id.maxSwipeupTimeEditText);
         _minSwipeupTimeEditText = _layout.findViewById(R.id.minSwipeupTimeEditText);
         _maxDelayTimeEditText = _layout.findViewById(R.id.maxDelayTimeEditText);

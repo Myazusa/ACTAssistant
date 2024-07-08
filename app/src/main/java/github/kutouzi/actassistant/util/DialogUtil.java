@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import github.kutouzi.actassistant.view.androidservice.ACTFloatingWindowService;
-
 public class DialogUtil {
     private static final String _TAG = DialogUtil.class.getName();
     private static Set<String> previousChildNodes = new HashSet<>();

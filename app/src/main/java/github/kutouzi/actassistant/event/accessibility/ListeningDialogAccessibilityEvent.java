@@ -13,7 +13,7 @@ import github.kutouzi.actassistant.io.JsonFileIO;
 import github.kutouzi.actassistant.service.MeituanService;
 import github.kutouzi.actassistant.service.PinduoduoService;
 import github.kutouzi.actassistant.util.DialogUtil;
-import github.kutouzi.actassistant.view.androidservice.ACTFloatingWindowService;
+import github.kutouzi.actassistant.androidservice.ACTFloatingWindowService;
 import github.kutouzi.actassistant.view.button.ToggleButton;
 
 public class ListeningDialogAccessibilityEvent {

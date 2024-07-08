@@ -2,7 +2,6 @@ package github.kutouzi.actassistant.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.util.Log;
-import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public class MeituanService extends ApplicationService{
     }
     public void autoCheckInTask(AccessibilityNodeInfo nodeInfo, AccessibilityService accessibilityService) throws FailedTaskException {
         int layers = 0;
-        if(!ActionUtil.clickAction(nodeInfo,"去提现")){
+        if(!ActionUtil.findParentsClickableNodesAction(nodeInfo,"去提现")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能打开任务页");
         }
@@ -60,7 +59,7 @@ public class MeituanService extends ApplicationService{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        if(!ActionUtil.clickAction(nodeInfo,"去打卡")){
+        if(!ActionUtil.findParentsClickableNodesAction(nodeInfo,"去打卡")){
             ActionUtil.returnAction(accessibilityService,layers);
             throw new FailedTaskException("未能点击到打卡");
         }

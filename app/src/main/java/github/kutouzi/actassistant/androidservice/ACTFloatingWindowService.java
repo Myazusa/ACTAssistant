@@ -1,5 +1,6 @@
-package github.kutouzi.actassistant.view.androidservice;
+package github.kutouzi.actassistant.androidservice;
 
+import static github.kutouzi.actassistant.MainActivity.COMMAND_ACT_FLOATING_WINGDOW_SERVICE;
 import static github.kutouzi.actassistant.MainActivity.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE;
 import static github.kutouzi.actassistant.MainActivity.windowView;
 
@@ -15,7 +16,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.LinearLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,7 +28,6 @@ import java.util.Optional;
 import github.kutouzi.actassistant.MainActivity;
 import github.kutouzi.actassistant.R;
 import github.kutouzi.actassistant.entity.AutoSettingData;
-import github.kutouzi.actassistant.entity.KeyWordData;
 import github.kutouzi.actassistant.entity.SwipeUpData;
 import github.kutouzi.actassistant.entity.SwitchApplicationData;
 import github.kutouzi.actassistant.entity.TimedTaskData;
@@ -46,7 +45,6 @@ import github.kutouzi.actassistant.service.NullService;
 import github.kutouzi.actassistant.service.PinduoduoService;
 import github.kutouzi.actassistant.service.XiaohongshuService;
 import github.kutouzi.actassistant.util.ActionUtil;
-import github.kutouzi.actassistant.util.DialogUtil;
 import github.kutouzi.actassistant.util.PackageCheckUtil;
 import github.kutouzi.actassistant.util.RandomUtil;
 import github.kutouzi.actassistant.view.button.ToggleButton;
@@ -76,6 +74,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
 
     //////////////////////
     //全局标记相关
+    // TODO:需要改为自搜索以便event
     public static int scanApplicationFlag = 0;
     private List<String> installedPackageList;
     private CountDownTimer countDownTimer = null;
@@ -92,7 +91,7 @@ public class ACTFloatingWindowService extends AccessibilityService {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE.equals(intent.getAction())) {
-                if(Objects.equals(intent.getStringExtra("key"), "Create")){
+                if(Objects.equals(intent.getStringExtra("key"), "createWindow")){
                     // 创建悬浮开关
                     createFloatingButton();
                     // 再创建悬浮窗里的开关
@@ -105,6 +104,13 @@ public class ACTFloatingWindowService extends AccessibilityService {
                     createScanApplicationSwitch();
                     Log.i(_TAG,"悬浮窗已创建");
 
+                }
+            }
+            if(COMMAND_ACT_FLOATING_WINGDOW_SERVICE.equals(intent.getAction())){
+                if(Objects.equals(intent.getStringExtra("command"),"clickScreen")){
+                    int x = intent.getIntExtra("x",0);
+                    int y = intent.getIntExtra("y",0);
+                    ActionUtil.performClick(ACTFloatingWindowService.this,x,y);
                 }
             }
         }
@@ -288,32 +294,30 @@ public class ACTFloatingWindowService extends AccessibilityService {
         }
     }
     private void applicationAnnounce(){
-        if(scanApplicationFlag != 0) {
-            switch (scanApplicationFlag) {
-                case NullService.APPLICATION_INDEX:
-                    GT.toast_time("没找到受支持的应用", 1000);
-                    break;
-                case PinduoduoService.APPLICATION_INDEX:
-                    applicationAnnounceToast(PinduoduoService.NAME);
-                    break;
-                case MeituanService.APPLICATION_INDEX:
-                    applicationAnnounceToast(MeituanService.NAME);
-                    break;
-                case DouyinjisuService.APPLICATION_INDEX:
-                    applicationAnnounceToast(DouyinjisuService.NAME);
-                    break;
-                case KuaishoujisuService.APPLICATION_INDEX:
-                    applicationAnnounceToast(KuaishoujisuService.NAME);
-                    break;
-                case BaidujisuService.APPLICATION_INDEX:
-                    //applicationAnnounceToast(BaidujisuService.NAME);
-                    break;
-                case XiaohongshuService.APPLICATION_INDEX:
-                    applicationAnnounceToast(XiaohongshuService.NAME);
-                    break;
-                default:
-                    break;
-            }
+        switch (scanApplicationFlag) {
+            case NullService.APPLICATION_INDEX:
+                GT.toast_time("没找到受支持的应用", 1000);
+                break;
+            case PinduoduoService.APPLICATION_INDEX:
+                applicationAnnounceToast(PinduoduoService.NAME);
+                break;
+            case MeituanService.APPLICATION_INDEX:
+                applicationAnnounceToast(MeituanService.NAME);
+                break;
+            case DouyinjisuService.APPLICATION_INDEX:
+                applicationAnnounceToast(DouyinjisuService.NAME);
+                break;
+            case KuaishoujisuService.APPLICATION_INDEX:
+                applicationAnnounceToast(KuaishoujisuService.NAME);
+                break;
+            case BaidujisuService.APPLICATION_INDEX:
+                //applicationAnnounceToast(BaidujisuService.NAME);
+                break;
+            case XiaohongshuService.APPLICATION_INDEX:
+                applicationAnnounceToast(XiaohongshuService.NAME);
+                break;
+            default:
+                break;
         }
     }
     private void applicationAnnounceToast(String s){
@@ -378,7 +382,12 @@ public class ACTFloatingWindowService extends AccessibilityService {
             //CheckPackageNameAccessibilityEvent.checkPackageNameAccessibilityEvent(event);
 
             // 运行定时任务
-            AutoTaskAccessibilityEvent.autoTaskAccessibilityEvent(event,this);
+            if (ACTFloatingWindowService.runTask) {
+                performGlobalAction(GLOBAL_ACTION_BACK);
+                // 传入的节点是当前活动的窗口的根节点，getRootInActiveWindow()获取得到
+                AutoTaskAccessibilityEvent.autoTaskAccessibilityEvent(event, getRootInActiveWindow(), this);
+                ACTFloatingWindowService.runTask = false;
+            }
 
             // 监听弹窗
             ListeningDialogAccessibilityEvent.listeningDialogAccessibilityEvent(event,this,_listeningDialogButton);
@@ -400,6 +409,14 @@ public class ACTFloatingWindowService extends AccessibilityService {
     private void createTaskSwitch(){
         _taskButton = windowView.findViewById(R.id.taskButton);
         _taskButton.setOnClickListener(v -> {
+            // TODO: 优化，与scanApp按钮里的冗余
+            scanApplicationFlag = PinduoduoService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
+                    + MeituanService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
+                    + DouyinjisuService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
+                    + KuaishoujisuService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName())
+                    + XiaohongshuService.getInsatance().scanApplication(getRootInActiveWindow().getPackageName());
+            applicationAnnounce();
+
             if(_taskButton.isButtonState() == ToggleStateEnum.Default){
                 startTask();
                 _taskButton.setButtonToTriggered();
@@ -441,5 +458,6 @@ public class ACTFloatingWindowService extends AccessibilityService {
 
     private void doTask() {
         runTask = true;
+        // 记得停止其他的按钮
     }
 }

@@ -2,12 +2,15 @@ package github.kutouzi.actassistant.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.util.Log;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityWindowInfo;
 
 import java.util.List;
 
 import github.kutouzi.actassistant.exception.FailedTaskException;
 import github.kutouzi.actassistant.util.ActionUtil;
+import github.kutouzi.actassistant.util.TraverseNodeUtil;
 
 public class PinduoduoService extends ApplicationService{
     public static final int APPLICATION_INDEX = 1 ;
@@ -48,8 +51,9 @@ public class PinduoduoService extends ApplicationService{
     }
     public void autoHeshuiTask(AccessibilityNodeInfo nodeInfo, AccessibilityService accessibilityService) throws FailedTaskException{
         int layers = 0;
-        if(!ActionUtil.clickAction(nodeInfo,"去提现")){
+        if(!ActionUtil.findSiblingsChildClickableNodesAction(nodeInfo,"金币",1)){
             ActionUtil.returnAction(accessibilityService,layers);
+            TraverseNodeUtil.traverseNodes(nodeInfo,nodeInfo.getChildCount());
             throw new FailedTaskException("未能打开任务页");
         }
         layers++;
@@ -59,8 +63,9 @@ public class PinduoduoService extends ApplicationService{
             throw new RuntimeException(e);
         }
 
-        if(!ActionUtil.findClickAction(nodeInfo,"每日8次喝水赚钱","去领取")){
+        if(!ActionUtil.findSiblingsClickableNodesAction(nodeInfo,"喝水赚钱","去领取")){
             ActionUtil.returnAction(accessibilityService,layers);
+            TraverseNodeUtil.traverseNodes(nodeInfo,nodeInfo.getChildCount());
             throw new FailedTaskException("未能喝水打卡");
         }
         layers++;
@@ -69,18 +74,26 @@ public class PinduoduoService extends ApplicationService{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        if(!ActionUtil.clickAction(nodeInfo,"喝水赚现金")){
+        if(!ActionUtil.findParentsClickableNodesAction(nodeInfo,"喝水打卡领")){
             ActionUtil.returnAction(accessibilityService,layers);
+            TraverseNodeUtil.traverseNodes(nodeInfo,nodeInfo.getChildCount());
             throw new FailedTaskException("未能领取金币");
         }
-
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
+        ActionUtil.returnAction(accessibilityService,layers);
+    }
+    public void autoCheckInTask(AccessibilityNodeInfo nodeInfo, AccessibilityService accessibilityService) throws FailedTaskException{
+        int layers = 0;
+        if(!ActionUtil.findParentsClickableNodesAction(nodeInfo,"领取今日现金")){
+            layers++;
+            ActionUtil.returnAction(accessibilityService,layers);
+            throw new FailedTaskException("未能领取今日现金");
+        }
+        layers++;
         ActionUtil.returnAction(accessibilityService,layers);
     }
 }

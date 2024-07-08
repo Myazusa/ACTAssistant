@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -19,16 +20,21 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.EditText;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigationrail.NavigationRailView;
+import com.gsls.gt.GT;
 
 import java.util.List;
 
+import github.kutouzi.actassistant.androidservice.ACTScreenCaptureService;
 import github.kutouzi.actassistant.databinding.ActivityMainBinding;
-import github.kutouzi.actassistant.view.androidservice.ACTFloatingWindowService;
+import github.kutouzi.actassistant.androidservice.ACTFloatingWindowService;
 import github.kutouzi.actassistant.util.FragmentUtil;
 import github.kutouzi.actassistant.util.KeyboardUtil;
 import github.kutouzi.actassistant.view.fragment.CilentListviewFragment;
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity  {
     //全局变量相关
     private boolean _isStartACTFloatingWindowServiceButtonPressed = false;
     public static final String CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE = "github.kutouzi.actassistant.CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE";
-
+    public static final String COMMAND_ACT_FLOATING_WINGDOW_SERVICE = "github.kutouzi.actassistant.COMMAND_ACT_FLOATING_WINGDOW_SERVICE";
     //////////////////////////////////
 
 
@@ -59,6 +65,15 @@ public class MainActivity extends AppCompatActivity  {
     private FloatingActionButton _startACTFloatingWindowServiceButton;
 
     //////////////////////////////////
+
+    //////////////////////
+    //截图相关
+    private static final int REQUEST_CODE = 100;
+    public MediaProjectionManager mediaProjectionManager;
+    private ActivityResultLauncher<Intent> startActivityForResult;
+
+    //////////////////////////////////
+
 
 
     //////////////////////
@@ -179,7 +194,10 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
     private void requestCreateACTFloatingWindow() {
-        sendBroadcast(new Intent(CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE).putExtra("key","Create"));
+        sendBroadcast(new Intent(CREATE_OR_DESTROY_ACT_FLOATING_WINGDOW_SERVICE).putExtra("key","createWindow"));
+    }
+    public void requestClickCommandACTFloatingWindow(String command,int x,int y) {
+        sendBroadcast(new Intent(COMMAND_ACT_FLOATING_WINGDOW_SERVICE).putExtra("command",command).putExtra("x",x).putExtra("y",y));
     }
 
     private boolean isAccessibilityServiceEnabled(String serviceName, List<AccessibilityServiceInfo> enabledAccessibilityServiceList) {
@@ -255,5 +273,38 @@ public class MainActivity extends AppCompatActivity  {
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            Intent serviceIntent = new Intent(this, ACTScreenCaptureService.class);
+            serviceIntent.putExtra("resultCode", resultCode);
+            serviceIntent.putExtra("data", data);
+            startService(serviceIntent);
+        }
+    }
+
+    // TODO: 在server里的客户端使用这个方法获取截图权限
+    private void getCaptureScreenPrime(){
+        startActivityForResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    // 用户授权成功，启动屏幕捕获服务
+                    Intent serviceIntent = new Intent(this, ACTScreenCaptureService.class);
+                    serviceIntent.putExtra("resultCode", result.getResultCode());
+                    serviceIntent.putExtra("data", result.getData());
+                    startService(serviceIntent);
+                } else {
+                    GT.toast_time("没有授权截图",3000);
+                    // TODO: 发送拒绝授权的通知给服务端
+                }
+            }
+        );
+    }
+    public void captureScreen(){
+        Intent intent = mediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult.launch(intent);
     }
 }

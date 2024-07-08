@@ -34,20 +34,20 @@ public class OptionTimedTaskFragment extends Fragment {
         _taskDelayTimeEditText = _layout.findViewById(R.id.taskDelayTimeEditText);
         TimedTaskData timedTaskData = (TimedTaskData) JsonFileIO.readJson(getContext(), JsonFileDefinition.TIMEDTASK_JSON_NAME, TimedTaskData.class);
         Optional.ofNullable(timedTaskData).ifPresent(s -> {
-            _taskDelayTimeEditText.setText(timedTaskData.getTimedTaskDelayValue());
+            _taskDelayTimeEditText.setText(String.valueOf(timedTaskData.getTimedTaskDelayValue()));
         });
 
         _taskDelayTimeEditText.setOnFocusChangeListener((v, hasFocus)->{
             if(!hasFocus){
                 Optional.ofNullable(timedTaskData).ifPresent(s->{
-                    if(Integer.parseInt(_taskDelayTimeEditText.getText().toString()) >= s.getTimedTaskDelayValue()){
+                    if(Integer.parseInt(_taskDelayTimeEditText.getText().toString()) >= 60000){
                         // 检测是否大于等于当前最小值
                         s.setTimedTaskDelayValue(Integer.parseInt(_taskDelayTimeEditText.getText().toString()));
                         JsonFileIO.writeJson(getContext(),JsonFileDefinition.TIMEDTASK_JSON_NAME,s);
                     }else {
                         // 小于的话就设置回去
                         s.setTimedTaskDelayValue(s.getTimedTaskDelayValue());
-                        GT.toast_time("写入失败：错误的值",3000);
+                        GT.toast_time("写入失败：间隔不能小于60秒",3000);
                     }
                 });
             }
